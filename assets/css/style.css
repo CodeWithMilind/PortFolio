@@ -1167,6 +1167,16 @@ main {
   font-weight: var(--fw-300);
 }
 
+/* Certifications use the same grid layout as projects */
+#certifications-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 30px;
+  margin-bottom: 10px;
+  list-style: none;
+  padding: 0;
+}
+
 
 
 
@@ -1896,7 +1906,8 @@ textarea.form-input::-webkit-resizer {
   /* portfolio and blog grid */
 
   .project-list,
-  .blog-posts-list {
+  .blog-posts-list,
+  #certifications-list {
     grid-template-columns: 1fr 1fr;
   }
 
@@ -2030,7 +2041,8 @@ textarea.form-input::-webkit-resizer {
    * PORTFOLIO
    */
 
-  .project-list {
+  .project-list,
+  #certifications-list {
     grid-template-columns: repeat(3, 1fr);
   }
 

@@ -811,9 +811,9 @@
             <h3 class="h3">My Certifications</h3>
           </div>
 
-          <ol class="timeline-list" id="certifications-list">
+          <ul class="project-list" id="certifications-list">
             <!-- Existing and admin-added certifications will appear here -->
-          </ol>
+          </ul>
 
         </section>
 
@@ -884,7 +884,8 @@
             </div>
 
             <div class="input-wrapper">
-              <input type="text" name="image" class="form-input" placeholder="Image path (e.g. ./assets/images/project-new.jpg)" required>
+              <input type="file" name="image" class="form-input" accept="image/*" required>
+              <small style="display: block; margin-top: 5px; color: #888;">Image will be saved to assets/images/ directory</small>
 
               <input type="text" name="link" class="form-input" placeholder="Project link (GitHub / Live URL)" required>
             </div>
@@ -938,6 +939,7 @@
 
             <div class="input-wrapper">
               <input type="file" name="image" class="form-input" accept="image/*">
+              <small style="display: block; margin-top: 5px; color: #888;">Image will be saved to assets/certificates/ directory</small>
             </div>
 
             <button class="form-btn" type="submit">

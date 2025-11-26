@@ -529,7 +529,7 @@ const renderAdminProjectCategories = () => {
 };
 
 if (projectAdminForm) {
-  projectAdminForm.addEventListener("submit", function (e) {
+  projectAdminForm.addEventListener("submit", async function (e) {
     e.preventDefault();
 
     const formData = new FormData(projectAdminForm);
@@ -538,7 +538,8 @@ if (projectAdminForm) {
     const categoryOther = (formData.get("categoryOther") || "")
       .toString()
       .trim();
-    const image = (formData.get("image") || "").toString().trim();
+    const fileInput = projectAdminForm.querySelector('input[name="image"]');
+    const file = fileInput && fileInput.files ? fileInput.files[0] : null;
     let link = (formData.get("link") || "").toString().trim();
 
     // determine display category (predefined or custom)
@@ -547,11 +548,29 @@ if (projectAdminForm) {
       categoryInput = categoryOther;
     }
 
-    if (!title || !categoryInput || !image || !link) return;
+    if (!title || !categoryInput || !file || !link) {
+      alert("Please fill in all fields including the image file.");
+      return;
+    }
 
     // normalize link so google.com becomes https://google.com
     if (!/^https?:\/\//i.test(link)) {
       link = "https://" + link;
+    }
+
+    // Generate a safe filename from the project title
+    const safeTitle = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    const fileExtension = file.name.split('.').pop();
+    const imageFileName = `project-${safeTitle}.${fileExtension}`;
+
+    // Save the file automatically to assets/projects/ directory
+    let imagePath;
+    try {
+      imagePath = await saveFileToDirectory(file, "projects", imageFileName);
+    } catch (error) {
+      console.error("Error saving project image:", error);
+      alert(`Failed to save project image: ${error.message}\n\nPlease try again and make sure to grant directory access when prompted.`);
+      return; // Stop form submission if file save fails
     }
 
     const categoryLower = categoryInput.toLowerCase();
@@ -566,7 +585,7 @@ if (projectAdminForm) {
           title: title,
           category: categoryLower,
           displayCategory: categoryInput,
-          image: image,
+          image: imagePath,
           link: link
         };
       }
@@ -576,7 +595,7 @@ if (projectAdminForm) {
         title: title,
         category: categoryLower,
         displayCategory: categoryInput,
-        image: image,
+        image: imagePath,
         link: link,
         isDefault: false
       };
@@ -642,7 +661,8 @@ if (projectAdminList) {
           }
         }
       }
-      if (imageInput) imageInput.value = project.image;
+      // Note: imageInput is now a file input, so we can't set its value
+      // The image path is stored in project.image and will be used when displaying
       if (linkInput) linkInput.value = project.link;
 
       editingProjectId = id;
@@ -704,6 +724,104 @@ const readFileAsDataURL = (file) => {
   });
 };
 
+// Store the directory handle for File System Access API
+let projectDirectoryHandle = null;
+
+// Hardcoded project path
+const PROJECT_ROOT_PATH = "C:\\Users\\milind\\Documents\\GitHub\\PortFolio";
+
+// Function to request directory access automatically (called when needed)
+const requestProjectDirectory = async () => {
+  try {
+    if ('showDirectoryPicker' in window) {
+      // Automatically request directory access - no confirm dialog
+      // Browser will remember permission after first time
+      const handle = await window.showDirectoryPicker({
+        mode: 'readwrite',
+        startIn: 'documents'
+      });
+      
+      projectDirectoryHandle = handle;
+      
+      // Mark that permission has been granted
+      localStorage.setItem('mc_directory_permission_granted', '1');
+      
+      // Verify access works by checking assets folder
+      try {
+        await handle.getDirectoryHandle('assets', { create: true });
+        console.log('✓ Directory access granted - files will save automatically!');
+      } catch (e) {
+        console.warn('Could not verify directory access:', e);
+      }
+      
+      return true;
+    }
+    return false;
+  } catch (error) {
+    if (error.name !== 'AbortError') {
+      console.error('Error requesting directory:', error);
+      localStorage.removeItem('mc_directory_permission_granted');
+    }
+    return false;
+  }
+};
+
+// Function to save file to specific subdirectory (projects or certificates)
+const saveFileToDirectory = async (file, subdirectory, fileName) => {
+  // Check if File System Access API is available
+  if (!('showDirectoryPicker' in window)) {
+    alert('File System Access API is not supported in this browser. Please use Chrome or Edge.');
+    throw new Error('File System Access API not supported');
+  }
+
+  try {
+    // If we don't have directory handle yet, request it automatically
+    if (!projectDirectoryHandle) {
+      const hasAccess = await requestProjectDirectory();
+      if (!hasAccess) {
+        throw new Error('Directory access was cancelled or denied. Please grant access to save files automatically.');
+      }
+    }
+    
+    // Navigate to assets/{subdirectory} directory and save file
+    const assetsHandle = await projectDirectoryHandle.getDirectoryHandle('assets', { create: true });
+    const targetHandle = await assetsHandle.getDirectoryHandle(subdirectory, { create: true });
+    
+    // Create file in the directory
+    const fileHandle = await targetHandle.getFileHandle(fileName, { create: true });
+    const writable = await fileHandle.createWritable();
+    await writable.write(file);
+    await writable.close();
+    
+    console.log(`✓ File saved: assets/${subdirectory}/${fileName}`);
+    return `./assets/${subdirectory}/${fileName}`;
+  } catch (error) {
+    console.error('Error saving file:', error);
+    // If directory handle is invalid, clear it and try once more
+    if (error.name === 'NotFoundError' || error.message.includes('invalid')) {
+      projectDirectoryHandle = null;
+      localStorage.removeItem('mc_directory_permission_granted');
+      
+      // Try one more time
+      const hasAccess = await requestProjectDirectory();
+      if (hasAccess) {
+        const assetsHandle = await projectDirectoryHandle.getDirectoryHandle('assets', { create: true });
+        const targetHandle = await assetsHandle.getDirectoryHandle(subdirectory, { create: true });
+        const fileHandle = await targetHandle.getFileHandle(fileName, { create: true });
+        const writable = await fileHandle.createWritable();
+        await writable.write(file);
+        await writable.close();
+        return `./assets/${subdirectory}/${fileName}`;
+      }
+    }
+    
+    alert(`Error saving file: ${error.message}\n\nPlease make sure you select the project directory when prompted.`);
+    throw error;
+  }
+};
+
+// Removed download fallback - files must be saved directly using File System Access API
+
 const renderCertifications = () => {
   const certs = loadCerts();
 
@@ -712,21 +830,29 @@ const renderCertifications = () => {
 
     if (!certs.length) {
       const li = document.createElement("li");
-      li.className = "timeline-item";
-      li.innerHTML = `<p class="timeline-text">Add your certifications from the Admin panel to see them here.</p>`;
+      li.className = "project-item active";
+      li.innerHTML = `<p class="timeline-text" style="text-align: center; padding: 20px;">Add your certifications from the Admin panel to see them here.</p>`;
       certDisplayList.appendChild(li);
     } else {
       certs.forEach((c) => {
         const li = document.createElement("li");
-        li.className = "timeline-item";
+        li.className = "project-item active";
+        
+        // Create image placeholder if no image
+        const imageSrc = c.image || "./assets/images/icon-learning.svg";
+        const imageAlt = c.title || "Certification";
+        
         li.innerHTML = `
-          <h4 class="h4 timeline-item-title">${c.title}</h4>
-          <span>${c.date}</span>
-          <p class="timeline-text">
-            ${c.issuer} <br>
-            <a href="${c.link}" target="_blank" class="contact-link">View Certificate</a>
-          </p>
-          ${c.image ? `<img src="${c.image}" alt="${c.title}" class="cert-image">` : ""}
+          <a href="${c.link || "#"}" target="_blank">
+            <figure class="project-img">
+              <div class="project-item-icon-box">
+                <ion-icon name="ribbon-outline"></ion-icon>
+              </div>
+              <img src="${imageSrc}" alt="${imageAlt}" loading="lazy">
+            </figure>
+            <h3 class="project-title">${c.title}</h3>
+            <p class="project-category">${c.issuer} • ${c.date}</p>
+          </a>
         `;
         certDisplayList.appendChild(li);
       });
@@ -788,13 +914,23 @@ if (certAdminForm) {
 
     const certs = loadCerts();
 
-    let imageData = editingCertImage || null;
+    let imagePath = null;
     if (file) {
       try {
-        imageData = await readFileAsDataURL(file);
-      } catch {
-        imageData = editingCertImage || null;
+        // Generate a safe filename from the certification title
+        const safeTitle = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+        const fileExtension = file.name.split('.').pop();
+        const imageFileName = `cert-${safeTitle}.${fileExtension}`;
+        
+        // Save the file automatically to assets/certificates/ directory
+        imagePath = await saveFileToDirectory(file, "certificates", imageFileName);
+      } catch (error) {
+        console.error("Error saving certificate image:", error);
+        alert(`Failed to save certificate image: ${error.message}\n\nPlease try again and make sure to grant directory access when prompted.`);
+        return; // Stop form submission if file save fails
       }
+    } else {
+      imagePath = editingCertImage || null;
     }
 
     if (editingCertId) {
@@ -806,7 +942,7 @@ if (certAdminForm) {
           issuer,
           date,
           link,
-          image: imageData
+          image: imagePath
         };
       }
     } else {
@@ -816,7 +952,7 @@ if (certAdminForm) {
         issuer,
         date,
         link,
-        image: imageData
+        image: imagePath
       });
     }
 
