@@ -149,6 +149,11 @@
 
         </ul>
 
+        <button class="sidebar-admin-btn" type="button" id="admin-open-btn">
+          <ion-icon name="lock-closed-outline"></ion-icon>
+          <span>Admin Panel</span>
+        </button>
+
       </div>
 
     </aside>
@@ -180,12 +185,12 @@
           </li>
 
           <li class="navbar-item">
-            <button class="navbar-link" data-nav-link>Portfolio</button>
+            <button class="navbar-link" data-nav-link>Projects</button>
           </li>
 
-          <!-- <li class="navbar-item">
-            <button class="navbar-link" data-nav-link>Blog</button>
-          </li> -->
+          <li class="navbar-item">
+            <button class="navbar-link" data-nav-link>Certifications</button>
+          </li>
 
           <li class="navbar-item">
             <button class="navbar-link" data-nav-link>Contact</button>
@@ -458,9 +463,7 @@
               <h4 class="h4 timeline-item-title">Master of Computer Applications (MCA)</h4>
               <span>2025 — 2027</span>
               <p class="timeline-text">
-                Dr. D. Y. Patil Dnyan Prasad University, Tathwade, Pune <br>
-                Pursuing postgraduate studies with a focus on Data Science, Artificial Intelligence, and Advanced
-                Analytics.
+                Dr. D. Y. Patil Dnyan Prasad University, Tathwade, Pune
               </p>
             </li>
 
@@ -468,8 +471,7 @@
               <h4 class="h4 timeline-item-title">Bachelor of Computer Applications (BCA)</h4>
               <span>2023 — 2025</span>
               <p class="timeline-text">
-                Moolji Jaitha College, Jalgaon <br>
-                Specialized in software development, database management, and data analysis using Python and SQL.
+                Moolji Jaitha College, Jalgaon
               </p>
             </li>
 
@@ -477,6 +479,8 @@
 
         </section>
 
+
+       
 
         <section class="timeline">
 
@@ -491,8 +495,8 @@
           <ol class="timeline-list">
 
             <li class="timeline-item">
-              <h4 class="h4 timeline-item-title">Data Science Intern — Rubix Company, Bangalore</h4>
-              <span>2025 — Present</span>
+              <h4 class="h4 timeline-item-title">Data Science Intern — Rubixe - AI Solutions, Bangalore</h4>
+              <span>Apr 2025 — Nov 2025</span>
 
               <p class="timeline-text">
                 Working on real-world data-driven projects involving data preprocessing, EDA, and model training using
@@ -503,7 +507,7 @@
 
             <li class="timeline-item">
               <h4 class="h4 timeline-item-title">Data Science Training — DataMites Institute</h4>
-              <span>2025 </span>
+              <span>Apr 2025 — Aug 2025</span>
 
               <p class="timeline-text">
                 Completed professional training covering statistics, data visualization, machine learning, and project
@@ -688,10 +692,10 @@
         - #PORTFOLIO
       -->
 
-      <article class="portfolio" data-page="portfolio">
+      <article class="portfolio" data-page="projects">
 
         <header>
-          <h2 class="h2 article-title">Portfolio</h2>
+          <h2 class="h2 article-title">Projects</h2>
         </header>
 
         <section class="projects">
@@ -700,30 +704,6 @@
           <ul class="filter-list">
             <li class="filter-item">
               <button class="active" data-filter-btn>All</button>
-            </li>
-
-            <li class="filter-item">
-              <button data-filter-btn>Data Science</button>
-            </li>
-
-            <li class="filter-item">
-              <button data-filter-btn>Machine Learning</button>
-            </li>
-
-            <li class="filter-item">
-              <button data-filter-btn>AI / Deep Learning</button>
-            </li>
-
-            <li class="filter-item">
-              <button data-filter-btn>Data Visualization</button>
-            </li>
-
-            <li class="filter-item">
-              <button data-filter-btn>Python Projects</button>
-            </li>
-
-            <li class="filter-item">
-              <button data-filter-btn>Analytics & BI</button>
             </li>
           </ul>
 
@@ -738,103 +718,11 @@
 
             <ul class="select-list">
               <li class="select-item"><button data-select-item>All</button></li>
-              <li class="select-item"><button data-select-item>Data Science</button></li>
-              <li class="select-item"><button data-select-item>Machine Learning</button></li>
-              <li class="select-item"><button data-select-item>AI / Deep Learning</button></li>
-              <li class="select-item"><button data-select-item>Data Visualization</button></li>
-              <li class="select-item"><button data-select-item>Python Projects</button></li>
-              <li class="select-item"><button data-select-item>Analytics & BI</button></li>
             </ul>
           </div>
 
-          <!-- ===== PROJECT CARDS ===== -->
-          <ul class="project-list">
-
-            <!-- Data Science Project -->
-            <li class="project-item active" data-filter-item data-category="data science">
-              <a href="#">
-                <figure class="project-img">
-                  <div class="project-item-icon-box">
-                    <ion-icon name="eye-outline"></ion-icon>
-                  </div>
-                  <img src="./assets/images/project-ds1.jpg" alt="Bank Marketing Prediction" loading="lazy">
-                </figure>
-                <h3 class="project-title">Bank Marketing Prediction</h3>
-                <p class="project-category">Data Science</p>
-              </a>
-            </li>
-
-            <!-- Machine Learning Project -->
-            <li class="project-item active" data-filter-item data-category="machine learning">
-              <a href="#">
-                <figure class="project-img">
-                  <div class="project-item-icon-box">
-                    <ion-icon name="eye-outline"></ion-icon>
-                  </div>
-                  <img src="./assets/images/project-ml1.jpg" alt="Customer Churn Analysis" loading="lazy">
-                </figure>
-                <h3 class="project-title">Customer Churn Analysis</h3>
-                <p class="project-category">Machine Learning</p>
-              </a>
-            </li>
-
-            <!-- AI / Deep Learning Project -->
-            <li class="project-item active" data-filter-item data-category="ai / deep learning">
-              <a href="#">
-                <figure class="project-img">
-                  <div class="project-item-icon-box">
-                    <ion-icon name="eye-outline"></ion-icon>
-                  </div>
-                  <img src="./assets/images/project-ai1.jpg" alt="Image Classification Model" loading="lazy">
-                </figure>
-                <h3 class="project-title">Image Classification Model</h3>
-                <p class="project-category">AI / Deep Learning</p>
-              </a>
-            </li>
-
-            <!-- Data Visualization Project -->
-            <li class="project-item active" data-filter-item data-category="data visualization">
-              <a href="#">
-                <figure class="project-img">
-                  <div class="project-item-icon-box">
-                    <ion-icon name="eye-outline"></ion-icon>
-                  </div>
-                  <img src="./assets/images/project-viz1.jpg" alt="Power BI Sales Dashboard" loading="lazy">
-                </figure>
-                <h3 class="project-title">Power BI Sales Dashboard</h3>
-                <p class="project-category">Data Visualization</p>
-              </a>
-            </li>
-
-            <!-- Python Project -->
-            <li class="project-item active" data-filter-item data-category="python projects">
-              <a href="#">
-                <figure class="project-img">
-                  <div class="project-item-icon-box">
-                    <ion-icon name="eye-outline"></ion-icon>
-                  </div>
-                  <img src="./assets/images/project-py1.jpg" alt="ShieldX File Converter" loading="lazy">
-                </figure>
-                <h3 class="project-title">ShieldX File Converter</h3>
-                <p class="project-category">Python Projects</p>
-              </a>
-            </li>
-
-            <!-- Analytics & BI Project -->
-            <li class="project-item active" data-filter-item data-category="analytics & bi">
-              <a href="#">
-                <figure class="project-img">
-                  <div class="project-item-icon-box">
-                    <ion-icon name="eye-outline"></ion-icon>
-                  </div>
-                  <img src="./assets/images/project-bi1.jpg" alt="Business Insights Report" loading="lazy">
-                </figure>
-                <h3 class="project-title">Business Insights Report</h3>
-                <p class="project-category">Analytics & BI</p>
-              </a>
-            </li>
-
-          </ul>
+          <!-- ===== PROJECT CARDS (rendered via JavaScript, preserving existing content) ===== -->
+          <ul class="project-list" id="project-list"></ul>
 
         </section>
 
@@ -858,8 +746,8 @@
         <section class="mapbox" data-mapbox>
           <figure>
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3768.5110121137084!2d75.56136297497573!3d20.70645780109119!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bd94b36b36b3b8d%3A0xf8e61e3f80755a0a!2sJalgaon%2C%20Maharashtra%2C%20India!5e0!3m2!1sen!2sin!4v1708869766143!5m2!1sen!2sin"
-              width="400" height="300" loading="lazy">
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3780.5715181500886!2d73.75753037504362!3d18.64739958246649!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc2b9a7c1a5e521%3A0x9a5a01b1d69d0e94!2sRavet%2C%20Pimpri-Chinchwad%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1732646400000!5m2!1sen!2sin"
+              width="400" height="300" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
             </iframe>
           </figure>
         </section>
@@ -869,7 +757,12 @@
 
           <h3 class="h3 form-title">Contact Form</h3>
 
-          <form action="#" class="form" data-form>
+          <form action="https://formsubmit.co/codewithmilind@gmail.com" method="POST" class="form" data-form>
+            <!-- FormSubmit configuration -->
+            <input type="hidden" name="_subject" value="New Contact Form Message from Portfolio">
+            <input type="hidden" name="_captcha" value="false">
+            <input type="hidden" name="_template" value="box">
+            <input type="hidden" name="_next" value="" id="form-next-url">
 
             <div class="input-wrapper">
               <input type="text" name="fullname" class="form-input" placeholder="Full name" required data-form-input>
@@ -884,9 +777,198 @@
               <span>Send Message</span>
             </button>
 
+            <p class="timeline-text" id="form-success-message" style="margin-top:15px; display:none; color:var(--orange-yellow-crayola);">
+              ✓ Message sent successfully! I'll get back to you soon.
+            </p>
+            <p class="timeline-text" id="form-error-message" style="margin-top:15px; display:none; color:#ff6b6b;">
+              ✗ Something went wrong. Please try again or email me directly.
+            </p>
+
           </form>
 
         </section>
+
+      </article>
+
+
+      <!--
+        - #CERTIFICATIONS PAGE
+      -->
+
+      <article class="portfolio" data-page="certifications">
+
+        <header>
+          <h2 class="h2 article-title">Certifications</h2>
+        </header>
+
+        <section class="timeline">
+
+          <div class="title-wrapper">
+            <div class="icon-box">
+              <ion-icon name="ribbon-outline"></ion-icon>
+            </div>
+
+            <h3 class="h3">My Certifications</h3>
+          </div>
+
+          <ol class="timeline-list" id="certifications-list">
+            <!-- Existing and admin-added certifications will appear here -->
+          </ol>
+
+        </section>
+
+      </article>
+
+
+
+      <!--
+        - #ADMIN
+      -->
+
+      <article class="admin" data-page="admin">
+
+        <header>
+          <h2 class="h2 article-title">Admin Panel</h2>
+        </header>
+
+        <!-- Admin login gate -->
+        <section class="contact-form" id="admin-login-section">
+
+          <h3 class="h3 form-title">Admin Login</h3>
+
+          <form class="form" id="admin-login-form">
+
+            <div class="input-wrapper">
+              <input type="password" name="password" class="form-input" placeholder="Enter admin password" required>
+            </div>
+
+            <button class="form-btn" type="submit">
+              <ion-icon name="lock-closed-outline"></ion-icon>
+              <span>Login</span>
+            </button>
+
+            <p class="timeline-text" id="admin-login-error" style="margin-top:10px; display:none; color:#ff6b6b;">
+              Incorrect password. Please try again.
+            </p>
+
+          </form>
+
+        </section>
+
+        <!-- Protected admin content -->
+        <div id="admin-content">
+
+        <section class="contact-form">
+
+          <h3 class="h3 form-title">Add New Project</h3>
+
+          <form class="form" id="project-admin-form">
+
+            <div class="input-wrapper">
+              <input type="text" name="title" class="form-input" placeholder="Project title" required>
+
+              <select name="category" class="form-input" required>
+                <option value="">Select category</option>
+                <option value="Data Science">Data Science</option>
+                <option value="Machine Learning">Machine Learning</option>
+                <option value="AI / Deep Learning">AI / Deep Learning</option>
+                <option value="Data Visualization">Data Visualization</option>
+                <option value="Python Projects">Python Projects</option>
+                <option value="Analytics & BI">Analytics & BI</option>
+                <option value="__other">Other (custom)</option>
+              </select>
+            </div>
+
+            <div class="input-wrapper" id="project-category-other-wrapper" style="display: none;">
+              <input type="text" name="categoryOther" class="form-input" placeholder="Enter custom category (e.g. NLP Projects)">
+            </div>
+
+            <div class="input-wrapper">
+              <input type="text" name="image" class="form-input" placeholder="Image path (e.g. ./assets/images/project-new.jpg)" required>
+
+              <input type="text" name="link" class="form-input" placeholder="Project link (GitHub / Live URL)" required>
+            </div>
+
+            <button class="form-btn" type="submit">
+              <ion-icon name="add-circle-outline"></ion-icon>
+              <span>Add Project</span>
+            </button>
+
+          </form>
+
+        </section>
+
+        <section class="skill">
+
+          <h3 class="h3 skills-title">Your Projects (Added from Admin)</h3>
+
+          <ul class="skills-list content-card" id="project-admin-list">
+            <!-- Admin-managed projects will be listed here -->
+          </ul>
+
+        </section>
+
+        <section class="skill">
+
+          <h3 class="h3 skills-title">Manage Custom Categories</h3>
+
+          <ul class="skills-list content-card" id="project-category-list">
+            <!-- Custom categories derived from admin projects will be listed here -->
+          </ul>
+
+        </section>
+
+        <section class="contact-form">
+
+          <h3 class="h3 form-title">Add New Certification</h3>
+
+          <form class="form" id="cert-admin-form">
+
+            <div class="input-wrapper">
+              <input type="text" name="title" class="form-input" placeholder="Certification title" required>
+
+              <input type="text" name="issuer" class="form-input" placeholder="Issuer / Platform" required>
+            </div>
+
+            <div class="input-wrapper">
+              <input type="text" name="date" class="form-input" placeholder="Date (e.g. Jun 2025)" required>
+
+              <input type="text" name="link" class="form-input" placeholder="Certificate link (URL)" required>
+            </div>
+
+            <div class="input-wrapper">
+              <input type="file" name="image" class="form-input" accept="image/*">
+            </div>
+
+            <button class="form-btn" type="submit">
+              <ion-icon name="ribbon-outline"></ion-icon>
+              <span>Add Certification</span>
+            </button>
+
+          </form>
+
+        </section>
+
+        <section class="skill">
+
+          <h3 class="h3 skills-title">Your Certifications (Added from Admin)</h3>
+
+          <ul class="skills-list content-card" id="cert-admin-list">
+            <!-- Admin-managed certifications will be listed here -->
+          </ul>
+
+        </section>
+
+        <section class="contact-form" style="margin-top:20px;">
+
+          <button class="form-btn" type="button" id="admin-logout-btn">
+            <ion-icon name="log-out-outline"></ion-icon>
+            <span>Logout</span>
+          </button>
+
+        </section>
+
+        </div>
 
       </article>
 
