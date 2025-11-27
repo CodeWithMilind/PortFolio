@@ -87,7 +87,23 @@ const getAllProjects = () => [...defaultProjects, ...loadUserProjects()];
 
 const projectListElem = document.getElementById("project-list");
 
-const syncProjectCategoriesUI = () => {
+const getProjectCategoryMeta = (projects) => {
+  const categoryMap = new Map();
+  projects.forEach((project) => {
+    const label = (project.displayCategory || project.category || "").trim();
+    if (!label) return;
+    const key = (project.category || label).toLowerCase();
+    if (!categoryMap.has(key)) {
+      categoryMap.set(key, label);
+    }
+  });
+  return Array.from(categoryMap.entries()).map(([value, label]) => ({
+    value,
+    label
+  }));
+};
+
+const syncProjectCategoriesUI = (categories = []) => {
   const filterList = document.querySelector(".filter-list");
   const selectList = document.querySelector(".select-list");
   if (!filterList || !selectList) return;
@@ -95,9 +111,6 @@ const syncProjectCategoriesUI = () => {
   // ensure only "All" remains in filter tabs
   const existingFilterBtns = Array.from(
     filterList.querySelectorAll("[data-filter-btn]")
-  );
-  const existingFilterKeys = new Set(
-    existingFilterBtns.map((btn) => btn.innerText.trim().toLowerCase())
   );
 
   existingFilterBtns.forEach((btn) => {
@@ -120,6 +133,26 @@ const syncProjectCategoriesUI = () => {
       if (li) li.remove();
     }
   });
+
+  if (!categories.length) return;
+
+  const filterFragment = document.createDocumentFragment();
+  const selectFragment = document.createDocumentFragment();
+
+  categories.forEach(({ value, label }) => {
+    const filterItem = document.createElement("li");
+    filterItem.className = "filter-item";
+    filterItem.innerHTML = `<button data-filter-btn>${label}</button>`;
+    filterFragment.appendChild(filterItem);
+
+    const selectItem = document.createElement("li");
+    selectItem.className = "select-item";
+    selectItem.innerHTML = `<button data-select-item>${label}</button>`;
+    selectFragment.appendChild(selectItem);
+  });
+
+  filterList.appendChild(filterFragment);
+  selectList.appendChild(selectFragment);
 };
 
 const renderProjects = () => {
@@ -132,7 +165,9 @@ const renderProjects = () => {
     const li = document.createElement("li");
     li.className = "project-item active";
     li.setAttribute("data-filter-item", "");
-    li.dataset.category = p.category.toLowerCase();
+    const categoryKey = (p.category || p.displayCategory || "all").toLowerCase();
+    li.dataset.category = categoryKey;
+    const displayCategory = p.displayCategory || p.category || "Other";
 
     li.innerHTML = `
       <a href="${p.link || "#"}" target="_blank">
@@ -143,14 +178,15 @@ const renderProjects = () => {
           <img src="${p.image}" alt="${p.title}" loading="lazy">
         </figure>
         <h3 class="project-title">${p.title}</h3>
-        <p class="project-category">${p.displayCategory}</p>
+        <p class="project-category">${displayCategory}</p>
       </a>
     `;
 
     projectListElem.appendChild(li);
   });
 
-  syncProjectCategoriesUI();
+  const categories = getProjectCategoryMeta(projects);
+  syncProjectCategoriesUI(categories);
 };
 
 renderProjects();
@@ -425,6 +461,21 @@ const projectCategorySelect = projectAdminForm
 const projectCategoryOtherWrapper = document.getElementById(
   "project-category-other-wrapper"
 );
+
+const initProjectCategorySelectOptions = () => {
+  if (!projectCategorySelect) return;
+  const existingValues = new Set(
+    Array.from(projectCategorySelect.options).map((opt) => opt.value)
+  );
+  BASE_CATEGORIES.forEach((category) => {
+    if (existingValues.has(category)) return;
+    const option = document.createElement("option");
+    option.value = category;
+    option.textContent = category;
+    projectCategorySelect.appendChild(option);
+  });
+};
+initProjectCategorySelectOptions();
 const toggleProjectOtherCategory = () => {
   if (!projectCategorySelect || !projectCategoryOtherWrapper) return;
   if (projectCategorySelect.value === "__other") {
