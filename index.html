@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Personal Portfolio</title>
+
+  <!--
+    - favicon
+  -->
+
+  <link rel="shortcut icon" href="./assets/images/logo.ico" type="image/x-icon">
+
+  <!--
+    - custom css link
+  -->
+  <link rel="stylesheet" href="./assets/css/style.css">
+
+  <!--
+    - google font link
+  -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+  <!--
+    - #MAIN
+  -->
+
+  <main>
+
+    <!--
+      - #SIDEBAR
+    -->
+
+    <aside class="sidebar" data-sidebar>
+
+      <div class="sidebar-info">
+
+        <figure class="avatar-box" style="border-radius: 50%;">
+          <img src="./assets/images/m.jpg" alt="Milind Chaudhari" style="border-radius: 50%;" width="80">
+        </figure>
+
+        <div class="info-content">
+          <h1 class="name" title="Milind Chaudhari">Milind Chaudhari</h1>
+
+          <p class="title">Data Scientist</p>
+        </div>
+
+        <button class="info_more-btn" data-sidebar-btn>
+          <span>Show Contacts</span>
+
+          <ion-icon name="chevron-down"></ion-icon>
+        </button>
+
+      </div>
+
+      <div class="sidebar-info_more">
+
+        <div class="separator"></div>
+
+        <ul class="contacts-list">
+
+          <li class="contact-item">
+
+            <div class="icon-box">
+              <ion-icon name="mail-outline"></ion-icon>
+            </div>
+
+            <div class="contact-info">
+              <p class="contact-title">Email</p>
+
+              <a href="mailto:codewithmilind@gmail.com" class="contact-link">codewithmilind@gmail.com</a>
+            </div>
+
+          </li>
+
+          <li class="contact-item">
+
+            <div class="icon-box">
+              <ion-icon name="phone-portrait-outline"></ion-icon>
+            </div>
+
+            <div class="contact-info">
+              <p class="contact-title">Phone</p>
+
+              <a href="tel:+918530871762" class="contact-link">+91 8530871762</a>
+            </div>
+
+          </li>
+
+          <li class="contact-item">
+
+            <div class="icon-box">
+              <ion-icon name="calendar-outline"></ion-icon>
+            </div>
+
+            <div class="contact-info">
+              <p class="contact-title">Birthday</p>
+
+              <time datetime="2004-02-07">Feb 7, 2004</time>
+            </div>
+
+          </li>
+
+          <li class="contact-item">
+
+            <div class="icon-box">
+              <ion-icon name="location-outline"></ion-icon>
+            </div>
+
+            <div class="contact-info">
+              <p class="contact-title">Location</p>
+
+              <address>Pune, Maharastra, India</address>
+            </div>
+
+          </li>
+
+        </ul>
+
+        <div class="separator"></div>
+
+        <ul class="social-list">
+
+          <li class="social-item">
+            <a href="https://github.com/CodeWithMilind" target="_blank" class="social-link">
+              <ion-icon name="logo-github"></ion-icon>
+            </a>
+          </li>
+
+          <li class="social-item">
+            <a href="https://www.linkedin.com/in/milind-chaudhari-604734237/" target="_blank" class="social-link"
+              aria-label="LinkedIn Profile">
+              <ion-icon name="logo-linkedin"></ion-icon>
+            </a>
+          </li>
+
+          <li class="social-item">
+            <a href="https://wa.me/919834385537" target="_blank" class="social-link">
+              <ion-icon name="logo-whatsapp"></ion-icon>
+            </a>
+          </li>
+
+        </ul>
+
+        <button class="sidebar-admin-btn" type="button" id="admin-open-btn">
+          <ion-icon name="lock-closed-outline"></ion-icon>
+          <span>Admin Panel</span>
+        </button>
+
+      </div>
+
+    </aside>
+
+
+
+
+
+    <!--
+      - #main-content
+    -->
+
+    <div class="main-content">
+
+      <!--
+        - #NAVBAR
+      -->
+
+      <nav class="navbar">
+
+        <ul class="navbar-list">
+
+          <li class="navbar-item">
+            <button class="navbar-link  active" data-nav-link>About</button>
+          </li>
+
+          <li class="navbar-item">
+            <button class="navbar-link" data-nav-link>Resume</button>
+          </li>
+
+          <li class="navbar-item">
+            <button class="navbar-link" data-nav-link>Projects</button>
+          </li>
+
+          <li class="navbar-item">
+            <button class="navbar-link" data-nav-link>Certifications</button>
+          </li>
+
+          <li class="navbar-item">
+            <button class="navbar-link" data-nav-link>Contact</button>
+          </li>
+
+        </ul>
+
+      </nav>
+
+
+
+
+
+      <!--
+        - #ABOUT
+      -->
+
+      <article class="about  active" data-page="about">
+
+        <header>
+          <h2 class="h2 article-title">About me</h2>
+        </header>
+
+        <section class="about-text">
+          <!-- <p>
+            I'm a Software Developer and AI Enthusiast from Jalgaon, India, specializing in web development, software
+            solutions. I love creating efficient, scalable, and innovative applications that
+            solve real-world problems.
+          </p>
+
+          <p>
+            My goal is to build web and software solutions that are not only functional and secure but also
+            user-friendly and visually appealing. I leverage the latest technologies to enhance user experiences and
+            bring automation into the digital world. I work on everything from full websites to smart AI applications. I
+            always try new things and build useful solutions.
+          </p> -->
+
+
+          <p>I'm a Data Scientist and AI Enthusiast from Pune, India, with a strong background in software and web
+            development. I specialize in extracting insights from data, building machine learning models, and developing
+            intelligent solutions that solve real-world problems.</p>
+
+          <p>My goal is to transform raw data into meaningful insights and smart systems that support better
+            decision-making. I use tools like Python, machine learning algorithms, and data visualization to uncover
+            patterns, predict outcomes, and create impactful data-driven products.</p>
+
+          <p>With a foundation in software development, I combine analytical thinking with coding skills to build
+            scalable, efficient, and user-focused solutions — from data dashboards to AI-powered applications.</p>
+
+
+
+
+        </section>
+
+
+        <!--
+          - service
+        -->
+
+        <!-- updation started -->
+
+        <section class="service">
+
+          <h3 class="h3 service-title">What I'm Doing</h3>
+
+          <ul class="service-list">
+
+            <li class="service-item">
+              <div class="service-icon-box">
+                <img src="./assets/images/icon-design.svg" alt="data cleaning icon" width="40">
+              </div>
+              <div class="service-content-box">
+                <h4 class="h4 service-item-title">Data Cleaning & Preprocessing</h4>
+                <p class="service-item-text">
+                  Handling missing values, outliers, and feature encoding using Pandas and NumPy to prepare high-quality
+                  datasets for analysis and model building.
+                </p>
+              </div>
+            </li>
+
+            <li class="service-item">
+              <div class="service-icon-box">
+                <img src="./assets/images/icon-dev.svg" alt="data visualization icon" width="40">
+              </div>
+              <div class="service-content-box">
+                <h4 class="h4 service-item-title">Exploratory Data Analysis (EDA)</h4>
+                <p class="service-item-text">
+                  Using Matplotlib, Seaborn, and Plotly to visualize insights, detect trends, and support data-driven
+                  decision-making — key skill tested in interviews.
+                </p>
+              </div>
+            </li>
+
+            <li class="service-item">
+              <div class="service-icon-box">
+                <img src="./assets/images/icon-app.svg" alt="machine learning icon" width="40">
+              </div>
+              <div class="service-content-box">
+                <h4 class="h4 service-item-title">Machine Learning & Model Development</h4>
+                <p class="service-item-text">
+                  Building predictive models using Scikit-learn, XGBoost, and Random Forest; applying feature selection
+                  and hyperparameter tuning to improve accuracy.
+                </p>
+              </div>
+            </li>
+
+            <li class="service-item">
+              <div class="service-icon-box">
+                <img src="https://img.icons8.com/ios/50/FAB005/database--v1.png" alt="database icon" width="40">
+              </div>
+              <div class="service-content-box">
+                <h4 class="h4 service-item-title">SQL & Data Management</h4>
+                <p class="service-item-text">
+                  Writing complex SQL queries for data extraction, aggregation, and analysis — essential for analytics
+                  and internship interviews.
+                </p>
+              </div>
+            </li>
+
+            <li class="service-item">
+              <div class="service-icon-box">
+                <img src="assets\images\icons8-learning-64.svg" alt="ai project icon" width="40">
+              </div>
+              <div class="service-content-box">
+                <h4 class="h4 service-item-title">AI Projects & Deployment</h4>
+                <p class="service-item-text">
+                  Building and deploying ML models using Streamlit and Flask; integrating Python automation for
+                  real-world business solutions.
+                </p>
+              </div>
+            </li>
+
+            <li class="service-item">
+              <div class="service-icon-box">
+                <img src="assets\images\icons8-group-of-projects-50.svg" alt="learning icon" width="40">
+              </div>
+              <div class="service-content-box">
+                <h4 class="h4 service-item-title">Continuous Learning</h4>
+                <p class="service-item-text">
+                  Expanding skills in Deep Learning, ML, and Power BI — preparing for high-growth data roles and great
+                  opportunities.
+                </p>
+              </div>
+            </li>
+
+          </ul>
+        </section>
+
+
+        <!-- updation finished -->
+
+        <!--
+          - testimonials modal
+        -->
+        <!-- if remove this navbar won't work -->
+        <div class="modal-container" data-modal-container>
+
+          <div class="overlay" data-overlay></div>
+
+          <section class="testimonials-modal">
+
+            <button class="modal-close-btn" data-modal-close-btn>
+              <ion-icon name="close-outline"></ion-icon>
+            </button>
+          </section>
+
+        </div>
+
+
+
+
+      </article>
+
+
+
+      <!--
+        - #RESUME
+      -->
+
+      <article class="resume" data-page="resume">
+
+        <header>
+          <h2 class="h2 article-title">Resume</h2>
+        </header>
+
+        <!-- education section old -->
+        <!-- <section class="timeline">
+
+          <div class="title-wrapper">
+            <div class="icon-box">
+              <ion-icon name="book-outline"></ion-icon>
+            </div>
+
+            <h3 class="h3">Education</h3>
+          </div>
+
+          <ol class="timeline-list">
+
+            <li class="timeline-item">
+
+              <h4 class="h4 timeline-item-title">Bachelor of Computer Application </h4>
+
+              <span>2023 - 2025</span>
+
+              <p class="timeline-text">
+                Moolji Jaitha College, Jalgaon
+              </p>
+
+            </li>
+
+            <li class="timeline-item">
+
+              <h4 class="h4 timeline-item-title">Bachelor of Science (Somputer Science) </h4>
+
+              <span>2021 - 2022</span>
+
+
+              <p class="timeline-text">
+                P. R. College, Dharangaon <br>
+
+                &emsp;I pursued the first year of B.Sc. Computer Science in 2022 but decided to
+                discontinue it as it included
+                subjects like Chemistry and Physics, which were not relevant to my focus on computer science. Instead, I
+                chose to specialize in core computer subjects to align with my career goals.
+              </p>
+
+            </li>
+
+            <li class="timeline-item">
+
+              <h4 class="h4 timeline-item-title">12th-Science</h4>
+
+              <span>2020 - 2021</span>
+
+              <p class="timeline-text">
+                Indira Kanya Madhyamik Vidyalaya, Dharangaon
+              </p>
+
+            </li>
+
+            <li class="timeline-item">
+
+              <h4 class="h4 timeline-item-title">10th </h4>
+
+              <span>2018 - 2019</span>
+
+              <p class="timeline-text">
+                P. R. High School, Dharangaon
+              </p>
+
+            </li>
+
+          </ol>
+
+        </section> -->
+        <!-- education section new -->
+        <section class="timeline">
+
+          <div class="title-wrapper">
+            <div class="icon-box">
+              <ion-icon name="book-outline"></ion-icon>
+            </div>
+
+            <h3 class="h3">Education</h3>
+          </div>
+
+          <ol class="timeline-list">
+
+            <li class="timeline-item">
+              <h4 class="h4 timeline-item-title">Master of Computer Applications (MCA)</h4>
+              <span>2025 — 2027</span>
+              <p class="timeline-text">
+                Dr. D. Y. Patil Dnyan Prasad University, Tathwade, Pune
+              </p>
+            </li>
+
+            <li class="timeline-item">
+              <h4 class="h4 timeline-item-title">Bachelor of Computer Applications (BCA)</h4>
+              <span>2023 — 2025</span>
+              <p class="timeline-text">
+                Moolji Jaitha College, Jalgaon
+              </p>
+            </li>
+
+          </ol>
+
+        </section>
+
+
+       
+
+        <section class="timeline">
+
+          <div class="title-wrapper">
+            <div class="icon-box">
+              <ion-icon name="book-outline"></ion-icon>
+            </div>
+
+            <h3 class="h3">Experience</h3>
+          </div>
+
+          <ol class="timeline-list">
+
+            <li class="timeline-item">
+              <h4 class="h4 timeline-item-title">Data Science Intern — Rubixe - AI Solutions, Bangalore</h4>
+              <span>Apr 2025 — Nov 2025</span>
+
+              <p class="timeline-text">
+                Working on real-world data-driven projects involving data preprocessing, EDA, and model training using
+                Python, Pandas, and Scikit-learn.
+                Contributing to predictive analytics and business intelligence tasks to support client solutions.
+              </p>
+            </li>
+
+            <li class="timeline-item">
+              <h4 class="h4 timeline-item-title">Data Science Training — DataMites Institute</h4>
+              <span>Apr 2025 — Aug 2025</span>
+
+              <p class="timeline-text">
+                Completed professional training covering statistics, data visualization, machine learning, and project
+                deployment.
+                Gained hands-on experience with Python, NumPy, Matplotlib, Seaborn, and SQL on real datasets.
+              </p>
+            </li>
+
+          </ol>
+
+        </section>
+
+
+
+        <!-- <section class="skill">
+
+          <h3 class="h3 skills-title">I Develop Skills Regularly</h3>
+
+          <ul class="skills-list content-card">
+
+            <li class="skills-item">
+
+              <div class="title-wrapper">
+                <h5 class="h5">NumPy</h5>
+                <data value="60">60%</data>
+              </div>
+
+              <div class="skill-progress-bg">
+                <div class="skill-progress-fill" style="width: 60%;"></div>
+              </div>
+
+            </li>
+
+            <li class="skills-item">
+
+              <div class="title-wrapper">
+                <h5 class="h5">Python</h5>
+                <data value="70">70%</data>
+              </div>
+
+              <div class="skill-progress-bg">
+                <div class="skill-progress-fill" style="width: 70%;"></div>
+              </div>
+
+            </li>
+
+            <li class="skills-item">
+
+              <div class="title-wrapper">
+                <h5 class="h5">Pandas</h5>
+                <data value="60">60%</data>
+              </div>
+
+              <div class="skill-progress-bg">
+                <div class="skill-progress-fill" style="width: 60%;"></div>
+              </div>
+
+            </li>
+
+            <li class="skills-item">
+
+              <div class="title-wrapper">
+                <h5 class="h5">SQL</h5>
+                <data value="70">70%</data>
+              </div>
+
+              <div class="skill-progress-bg">
+                <div class="skill-progress-fill" style="width: 70%;"></div>
+              </div>
+
+            </li>
+
+
+            <li class="skills-item">
+
+              <div class="title-wrapper">
+                <h5 class="h5">Data Analysis</h5>
+                <data value="60">60%</data>
+              </div>
+
+              <div class="skill-progress-bg">
+                <div class="skill-progress-fill" style="width: 60%;"></div>
+              </div>
+
+            </li>
+
+          </ul>
+
+        </section> -->
+
+        <section class="skill">
+
+          <h3 class="h3 skills-title">Core Data Science Skills</h3>
+
+          <ul class="skills-list content-card">
+
+            <li class="skills-item">
+              <div class="title-wrapper">
+                <h5 class="h5">Python</h5>
+                <data value="85">85%</data>
+              </div>
+              <div class="skill-progress-bg">
+                <div class="skill-progress-fill" style="width: 85%;"></div>
+              </div>
+            </li>
+
+            <li class="skills-item">
+              <div class="title-wrapper">
+                <h5 class="h5">Pandas & NumPy</h5>
+                <data value="80">80%</data>
+              </div>
+              <div class="skill-progress-bg">
+                <div class="skill-progress-fill" style="width: 80%;"></div>
+              </div>
+            </li>
+
+            <li class="skills-item">
+              <div class="title-wrapper">
+                <h5 class="h5">Data Visualization (Matplotlib, Seaborn, Power BI)</h5>
+                <data value="75">75%</data>
+              </div>
+              <div class="skill-progress-bg">
+                <div class="skill-progress-fill" style="width: 75%;"></div>
+              </div>
+            </li>
+
+            <li class="skills-item">
+              <div class="title-wrapper">
+                <h5 class="h5">Machine Learning (Scikit-learn, XGBoost)</h5>
+                <data value="70">70%</data>
+              </div>
+              <div class="skill-progress-bg">
+                <div class="skill-progress-fill" style="width: 70%;"></div>
+              </div>
+            </li>
+
+            <li class="skills-item">
+              <div class="title-wrapper">
+                <h5 class="h5">SQL & Database Management</h5>
+                <data value="75">75%</data>
+              </div>
+              <div class="skill-progress-bg">
+                <div class="skill-progress-fill" style="width: 75%;"></div>
+              </div>
+            </li>
+
+            <li class="skills-item">
+              <div class="title-wrapper">
+                <h5 class="h5">EDA & Feature Engineering</h5>
+                <data value="70">70%</data>
+              </div>
+              <div class="skill-progress-bg">
+                <div class="skill-progress-fill" style="width: 70%;"></div>
+              </div>
+            </li>
+
+
+
+            <li class="skills-item">
+              <div class="title-wrapper">
+                <h5 class="h5">Statistics & Probability</h5>
+                <data value="70">70%</data>
+              </div>
+              <div class="skill-progress-bg">
+                <div class="skill-progress-fill" style="width: 70%;"></div>
+              </div>
+            </li>
+
+          </ul>
+
+        </section>
+
+
+
+      </article>
+
+
+
+
+
+      <!--
+        - #PORTFOLIO
+      -->
+
+      <article class="portfolio" data-page="projects">
+
+        <header>
+          <h2 class="h2 article-title">Projects</h2>
+        </header>
+
+        <section class="projects">
+
+          <!-- ===== FILTER MENU ===== -->
+          <ul class="filter-list">
+            <li class="filter-item">
+              <button class="active" data-filter-btn>All</button>
+            </li>
+          </ul>
+
+          <!-- ===== DROP-DOWN FILTER ===== -->
+          <div class="filter-select-box">
+            <button class="filter-select" data-select>
+              <div class="select-value" data-selecct-value>Select category</div>
+              <div class="select-icon">
+                <ion-icon name="chevron-down"></ion-icon>
+              </div>
+            </button>
+
+            <ul class="select-list">
+              <li class="select-item"><button data-select-item>All</button></li>
+            </ul>
+          </div>
+
+          <!-- ===== PROJECT CARDS (rendered via JavaScript, preserving existing content) ===== -->
+          <ul class="project-list" id="project-list"></ul>
+
+        </section>
+
+      </article>
+
+
+
+
+
+
+      <!--
+        - #CONTACT
+      -->
+
+      <article class="contact" data-page="contact">
+
+        <header>
+          <h2 class="h2 article-title">Contact</h2>
+        </header>
+
+        <section class="mapbox" data-mapbox>
+          <figure>
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3780.5715181500886!2d73.75753037504362!3d18.64739958246649!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc2b9a7c1a5e521%3A0x9a5a01b1d69d0e94!2sRavet%2C%20Pimpri-Chinchwad%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1732646400000!5m2!1sen!2sin"
+              width="400" height="300" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+          </figure>
+        </section>
+
+
+        <section class="contact-form">
+
+          <h3 class="h3 form-title">Contact Form</h3>
+
+          <form action="https://formsubmit.co/codewithmilind@gmail.com" method="POST" class="form" data-form>
+            <!-- FormSubmit configuration -->
+            <input type="hidden" name="_subject" value="New Contact Form Message from Portfolio">
+            <input type="hidden" name="_captcha" value="false">
+            <input type="hidden" name="_template" value="box">
+            <input type="hidden" name="_next" value="" id="form-next-url">
+
+            <div class="input-wrapper">
+              <input type="text" name="fullname" class="form-input" placeholder="Full name" required data-form-input>
+
+              <input type="email" name="email" class="form-input" placeholder="Email address" required data-form-input>
+            </div>
+
+            <textarea name="message" class="form-input" placeholder="Your Message" required data-form-input></textarea>
+
+            <button class="form-btn" type="submit" disabled data-form-btn>
+              <ion-icon name="paper-plane"></ion-icon>
+              <span>Send Message</span>
+            </button>
+
+            <p class="timeline-text" id="form-success-message" style="margin-top:15px; display:none; color:var(--orange-yellow-crayola);">
+              ✓ Message sent successfully! I'll get back to you soon.
+            </p>
+            <p class="timeline-text" id="form-error-message" style="margin-top:15px; display:none; color:#ff6b6b;">
+              ✗ Something went wrong. Please try again or email me directly.
+            </p>
+
+          </form>
+
+        </section>
+
+      </article>
+
+
+      <!--
+        - #CERTIFICATIONS PAGE
+      -->
+
+      <article class="portfolio" data-page="certifications">
+
+        <header>
+          <h2 class="h2 article-title">Certifications</h2>
+        </header>
+
+        <section class="timeline">
+
+          <div class="title-wrapper">
+            <div class="icon-box">
+              <ion-icon name="ribbon-outline"></ion-icon>
+            </div>
+
+            <h3 class="h3">My Certifications</h3>
+          </div>
+
+          <ul class="project-list" id="certifications-list">
+            <!-- Existing and admin-added certifications will appear here -->
+          </ul>
+
+        </section>
+
+      </article>
+
+
+
+      <!--
+        - #ADMIN
+      -->
+
+      <article class="admin" data-page="admin">
+
+        <header>
+          <h2 class="h2 article-title">Admin Panel</h2>
+        </header>
+
+        <!-- Admin login gate -->
+        <section class="contact-form" id="admin-login-section">
+
+          <h3 class="h3 form-title">Admin Login</h3>
+
+          <form class="form" id="admin-login-form">
+
+            <div class="input-wrapper">
+              <input type="password" name="password" class="form-input" placeholder="Enter admin password" required>
+            </div>
+
+            <button class="form-btn" type="submit">
+              <ion-icon name="lock-closed-outline"></ion-icon>
+              <span>Login</span>
+            </button>
+
+            <p class="timeline-text" id="admin-login-error" style="margin-top:10px; display:none; color:#ff6b6b;">
+              Incorrect password. Please try again.
+            </p>
+
+          </form>
+
+        </section>
+
+        <!-- Protected admin content -->
+        <div id="admin-content">
+
+        <section class="contact-form">
+
+          <h3 class="h3 form-title">Add New Project</h3>
+
+          <form class="form" id="project-admin-form">
+
+            <div class="input-wrapper">
+              <input type="text" name="title" class="form-input" placeholder="Project title" required>
+
+              <select name="category" class="form-input" required>
+                <option value="">Select category</option>
+                <option value="__other">Other (custom)</option>
+              </select>
+            </div>
+
+            <div class="input-wrapper" id="project-category-other-wrapper" style="display: none;">
+              <input type="text" name="categoryOther" class="form-input" placeholder="Enter custom category (e.g. NLP Projects)">
+            </div>
+
+            <div class="input-wrapper">
+              <input type="file" name="image" class="form-input" accept="image/*" required>
+              <small style="display: block; margin-top: 5px; color: #888;">Image will be saved to assets/images/ directory</small>
+
+              <input type="text" name="link" class="form-input" placeholder="Project link (GitHub / Live URL)" required>
+            </div>
+
+            <button class="form-btn" type="submit">
+              <ion-icon name="add-circle-outline"></ion-icon>
+              <span>Add Project</span>
+            </button>
+
+          </form>
+
+        </section>
+
+        <section class="skill">
+
+          <h3 class="h3 skills-title">Your Projects (Added from Admin)</h3>
+
+          <ul class="skills-list content-card" id="project-admin-list">
+            <!-- Admin-managed projects will be listed here -->
+          </ul>
+
+        </section>
+
+        <section class="skill">
+
+          <h3 class="h3 skills-title">Manage Custom Categories</h3>
+
+          <ul class="skills-list content-card" id="project-category-list">
+            <!-- Custom categories derived from admin projects will be listed here -->
+          </ul>
+
+        </section>
+
+        <section class="contact-form">
+
+          <h3 class="h3 form-title">Add New Certification</h3>
+
+          <form class="form" id="cert-admin-form">
+
+            <div class="input-wrapper">
+              <input type="text" name="title" class="form-input" placeholder="Certification title" required>
+
+              <input type="text" name="issuer" class="form-input" placeholder="Issuer / Platform" required>
+            </div>
+
+            <div class="input-wrapper">
+              <input type="text" name="date" class="form-input" placeholder="Date (e.g. Jun 2025)" required>
+
+              <input type="text" name="link" class="form-input" placeholder="Certificate link (URL)" required>
+            </div>
+
+            <div class="input-wrapper">
+              <input type="file" name="image" class="form-input" accept="image/*">
+              <small style="display: block; margin-top: 5px; color: #888;">Image will be saved to assets/certificates/ directory</small>
+            </div>
+
+            <button class="form-btn" type="submit">
+              <ion-icon name="ribbon-outline"></ion-icon>
+              <span>Add Certification</span>
+            </button>
+
+          </form>
+
+        </section>
+
+        <section class="skill">
+
+          <h3 class="h3 skills-title">Your Certifications (Added from Admin)</h3>
+
+          <ul class="skills-list content-card" id="cert-admin-list">
+            <!-- Admin-managed certifications will be listed here -->
+          </ul>
+
+        </section>
+
+        <section class="contact-form" style="margin-top:20px;">
+
+          <button class="form-btn" type="button" id="admin-logout-btn">
+            <ion-icon name="log-out-outline"></ion-icon>
+            <span>Logout</span>
+          </button>
+
+        </section>
+
+        </div>
+
+      </article>
+
+    </div>
+
+  </main>
+
+
+
+
+
+
+  <!--
+    - custom js link
+  -->
+  <script src="./assets/js/script.js"></script>
+
+  <!--
+    - ionicon link
+  -->
+  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
+</body>
+v
+</html>
