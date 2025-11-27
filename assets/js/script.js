@@ -332,7 +332,7 @@ if (form) {
 // page navigation variables
 const navigationLinks = document.querySelectorAll("[data-nav-link]");
 const pages = document.querySelectorAll("[data-page]");
-// Encrypted admin password: "FRIDAY" obfuscated with a simple XOR key
+// Encrypted admin password: "Fri***" obfuscated with a simple XOR key
 const ADMIN_PASSWORD_ENC = [87, 67, 88, 85, 80, 72]; // result of each charCode ^ ADMIN_KEY
 const ADMIN_KEY = 17;
 const getAdminPassword = () =>
