@@ -21,3 +21,4 @@ package-lock.json
 # Note: We DO want to track images in assets/projects/ and assets/certificates/ directories
 # So we're NOT ignoring *.jpg, *.png, *.svg, etc.
 
+assets/projects/project-adas-system.jpg
