@@ -1,6 +1,6 @@
 [
   {
-    "id": "miigezq1jv9iua",
+    "id": "miii4jjxquzvk2",
     "title": "Certified Data Scientist",
     "issuer": "Datamites",
     "date": "Aug 2025",
@@ -8,15 +8,15 @@
     "image": "./assets/certificates/cert-certified-data-scientist.jpg"
   },
   {
-    "id": "miih46fnb4k5hv",
-    "title": "Data Science NOC",
+    "id": "miii7016jvwn1v",
+    "title": "Data Scientist NOC",
     "issuer": "Datamites",
     "date": "Aug 2025",
     "link": "https://s3uploadobject.s3.amazonaws.com/erp_webinar_certificate/erp_enroll_certificate/NOC25090217568093756482.pdf",
-    "image": "./assets/certificates/cert-data-science-noc.jpg"
+    "image": "./assets/certificates/cert-data-scientist-noc.jpg"
   },
   {
-    "id": "miih5oq0f0knpw",
+    "id": "miii9yao2tk6vu",
     "title": "Data Science Intern",
     "issuer": "Rubixe AI Solutions",
     "date": "APR 2025 - Nov 2025",

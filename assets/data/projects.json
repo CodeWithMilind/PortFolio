@@ -1,1 +1,38 @@
-[]
+[
+  {
+    "id": "miiiededt1s8pz",
+    "title": "Portuges Bank Marketing",
+    "category": "machine learning",
+    "displayCategory": "Machine Learning",
+    "image": "./assets/projects/project-portuges-bank-marketing.png",
+    "link": "https://github.com/CodeWithMilind/Data-Science---Github/tree/main/Internship/PRCP-1000-Portuges%20Bank",
+    "isDefault": false
+  },
+  {
+    "id": "miiifnqi40244o",
+    "title": "CNN RiceLeaf Classification",
+    "category": "ai / deep learning",
+    "displayCategory": "AI / Deep Learning",
+    "image": "./assets/projects/project-cnn-riceleaf-classification.png",
+    "link": "https://github.com/CodeWithMilind/Data-Science---Github/tree/main/Internship/PRCP-1001-RiceLeaf",
+    "isDefault": false
+  },
+  {
+    "id": "miiiglmd1ysp26",
+    "title": "Home Loan Prediction",
+    "category": "machine learning",
+    "displayCategory": "Machine Learning",
+    "image": "./assets/projects/project-home-loan-prediction.png",
+    "link": "https://github.com/CodeWithMilind/Data-Science---Github/tree/main/Internship/PRCP-1006-HomeLoanDef",
+    "isDefault": false
+  },
+  {
+    "id": "miiiii2xyiec0z",
+    "title": "ITSM ML Client Project",
+    "category": "machine learning",
+    "displayCategory": "Machine Learning",
+    "image": "./assets/projects/project-itsm-ml-client-project.png",
+    "link": "https://github.com/CodeWithMilind/Data-Science---Github/tree/main/Internship/Client%20Project",
+    "isDefault": false
+  }
+]
