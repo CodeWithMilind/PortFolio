@@ -62,26 +62,135 @@ const STORAGE_KEYS = {
   certs: "mc_portfolio_certs"
 };
 
-// default projects (empty so everything comes from Admin)
-const defaultProjects = [];
+// Global data storage (loaded from JSON files)
+let globalProjectsData = [];
+let globalCertsData = [];
+let dataLoaded = false;
 
-const loadUserProjects = () => {
+// Load data from JSON files (for all users)
+const loadDataFromJSON = async () => {
+  if (dataLoaded) return; // Only load once
+  
   try {
-    const stored = localStorage.getItem(STORAGE_KEYS.projects);
-    return stored ? JSON.parse(stored) : [];
+    // Load projects
+    const projectsResponse = await fetch('./assets/data/projects.json');
+    if (projectsResponse.ok) {
+      globalProjectsData = await projectsResponse.json();
+    } else {
+      console.warn("Failed to load projects.json, using empty array");
+      globalProjectsData = [];
+    }
   } catch (e) {
-    console.error("Failed to load projects from localStorage", e);
-    return [];
+    console.error("Error loading projects.json:", e);
+    globalProjectsData = [];
+  }
+
+  try {
+    // Load certificates
+    const certsResponse = await fetch('./assets/data/certificates.json');
+    if (certsResponse.ok) {
+      globalCertsData = await certsResponse.json();
+    } else {
+      console.warn("Failed to load certificates.json, using empty array");
+      globalCertsData = [];
+    }
+  } catch (e) {
+    console.error("Error loading certificates.json:", e);
+    globalCertsData = [];
+  }
+  
+  dataLoaded = true;
+};
+
+// Save data to JSON file (admin only, using File System Access API)
+const saveDataToJSONFile = async (data, filename) => {
+  if (!isAdminAuthed) {
+    console.error("Only admin can save data to JSON files");
+    return false;
+  }
+
+  try {
+    // Check if File System Access API is available
+    if (!('showDirectoryPicker' in window)) {
+      console.warn("File System Access API not available. Data saved to localStorage only.");
+      return false;
+    }
+
+    // If we don't have directory handle yet, request it
+    if (!projectDirectoryHandle) {
+      const hasAccess = await requestProjectDirectory();
+      if (!hasAccess) {
+        console.warn("Directory access denied. Data saved to localStorage only.");
+        return false;
+      }
+    }
+
+    // Navigate to assets/data directory
+    const assetsHandle = await projectDirectoryHandle.getDirectoryHandle('assets', { create: true });
+    const dataHandle = await assetsHandle.getDirectoryHandle('data', { create: true });
+    
+    // Create/update JSON file
+    const fileHandle = await dataHandle.getFileHandle(filename, { create: true });
+    const writable = await fileHandle.createWritable();
+    await writable.write(JSON.stringify(data, null, 2));
+    await writable.close();
+    
+    console.log(`✓ Data saved to assets/data/${filename}`);
+    return true;
+  } catch (error) {
+    console.error(`Error saving ${filename}:`, error);
+    return false;
   }
 };
 
-const saveUserProjects = (projects) => {
+// Load projects (from JSON files - visible to all users)
+const loadUserProjects = () => {
+  return globalProjectsData || [];
+};
+
+// Save projects (admin only - saves to both localStorage and JSON file)
+const saveUserProjects = async (projects) => {
+  // Update global data
+  globalProjectsData = projects;
+  
+  // Save to localStorage for immediate preview
   try {
     localStorage.setItem(STORAGE_KEYS.projects, JSON.stringify(projects));
   } catch (e) {
     console.error("Failed to save projects to localStorage", e);
   }
+  
+  // Save to JSON file (admin only)
+  if (isAdminAuthed) {
+    await saveDataToJSONFile(projects, 'projects.json');
+  }
 };
+
+// Load certificates (from JSON files - visible to all users)
+const loadCerts = () => {
+  return globalCertsData || [];
+};
+
+// Save certificates (admin only - saves to both localStorage and JSON file)
+const saveCerts = async (certs) => {
+  // Update global data
+  globalCertsData = certs;
+  
+  // Save to localStorage for immediate preview
+  try {
+    localStorage.setItem(STORAGE_KEYS.certs, JSON.stringify(certs));
+  } catch (e) {
+    console.error("Failed to save certificates to localStorage", e);
+  }
+  
+  // Save to JSON file (admin only)
+  if (isAdminAuthed) {
+    await saveDataToJSONFile(certs, 'certificates.json');
+  }
+};
+
+// default projects (empty so everything comes from Admin)
+const defaultProjects = [];
 
 const getAllProjects = () => [...defaultProjects, ...loadUserProjects()];
 
@@ -189,7 +298,11 @@ const renderProjects = () => {
   syncProjectCategoriesUI(categories);
 };
 
-renderProjects();
+// Load data and render on page load
+loadDataFromJSON().then(() => {
+  renderProjects();
+  renderCertifications();
+});
 
 // custom select & filter variables
 const select = document.querySelector("[data-select]");
@@ -345,6 +458,15 @@ for (let i = 0; i < navigationLinks.length; i++) {
 
     const clickedLabel = this.innerHTML.toLowerCase();
 
+    // Protect admin page - only accessible if authenticated
+    if (clickedLabel === "admin" && !isAdminAuthed) {
+      // If trying to access admin without auth, show login section
+      if (adminOpenBtn) {
+        adminOpenBtn.click();
+      }
+      return; // Don't navigate to admin page
+    }
+
     // toggle articles
     pages.forEach((page) => {
       if (page.dataset.page === clickedLabel) {
@@ -397,6 +519,9 @@ const updateAdminView = () => {
   if (adminLoginError) {
     adminLoginError.style.display = "none";
   }
+  
+  // Hide admin button in sidebar if not authenticated (optional - you can remove this if you want the button always visible)
+  // The button will still require authentication to access admin content
 };
 
 if (adminLoginForm) {
@@ -418,16 +543,49 @@ if (adminLoginForm) {
 
 updateAdminView();
 
+// Ensure admin page is not visible on load if not authenticated
+if (!isAdminAuthed) {
+  const adminPage = document.querySelector('[data-page="admin"]');
+  if (adminPage) {
+    adminPage.classList.remove("active");
+  }
+}
+
 if (adminLogoutBtn) {
   adminLogoutBtn.addEventListener("click", function () {
     isAdminAuthed = false;
     localStorage.removeItem("mc_admin_ok");
     updateAdminView();
+    // Navigate away from admin page after logout
+    const adminPage = document.querySelector('[data-page="admin"]');
+    if (adminPage && adminPage.classList.contains("active")) {
+      // Navigate to about page
+      const aboutPage = document.querySelector('[data-page="about"]');
+      if (aboutPage) {
+        adminPage.classList.remove("active");
+        aboutPage.classList.add("active");
+      }
+    }
   });
 }
 
 if (adminOpenBtn) {
   adminOpenBtn.addEventListener("click", function () {
+    // Only allow access if authenticated
+    if (!isAdminAuthed) {
+      // Show login section if not authenticated
+      pages.forEach((page) => {
+        if (page.dataset.page === "admin") {
+          page.classList.add("active");
+        } else {
+          page.classList.remove("active");
+        }
+      });
+      navigationLinks.forEach((link) => link.classList.remove("active"));
+      window.scrollTo(0, 0);
+      return;
+    }
+    
     pages.forEach((page) => {
       if (page.dataset.page === "admin") {
         page.classList.add("active");
@@ -652,7 +810,7 @@ if (projectAdminForm) {
       };
       current.push(newProject);
     }
-    saveUserProjects(current);
+    const jsonSaved = await saveUserProjects(current);
 
     projectAdminForm.reset();
     editingProjectId = null;
@@ -662,11 +820,18 @@ if (projectAdminForm) {
     renderProjects();
     filterFunc("all");
     renderAdminProjects();
+    
+    // Show success message
+    if (jsonSaved) {
+      alert("✓ Project saved successfully!\n\nNext steps:\n1. Open GitHub Desktop\n2. Commit the files (assets/data/projects.json and assets/projects/)\n3. Push to GitHub\n\nAll users will see this project after you push!");
+    } else {
+      alert("✓ Project saved to localStorage!\n\nNote: JSON file could not be saved automatically. Please commit and push manually.");
+    }
   });
 }
 
 if (projectAdminList) {
-  projectAdminList.addEventListener("click", function (e) {
+  projectAdminList.addEventListener("click", async function (e) {
     const removeBtn = e.target.closest("[data-remove-project]");
     const editBtn = e.target.closest("[data-edit-project]");
 
@@ -674,7 +839,7 @@ if (projectAdminList) {
       const id = removeBtn.getAttribute("data-remove-project");
       let current = loadUserProjects();
       current = current.filter((p) => p.id !== id);
-      saveUserProjects(current);
+      await saveUserProjects(current);
 
       renderProjects();
       filterFunc("all");
@@ -726,14 +891,14 @@ if (projectAdminList) {
 renderAdminProjects();
 
 if (projectCategoryList) {
-  projectCategoryList.addEventListener("click", function (e) {
+  projectCategoryList.addEventListener("click", async function (e) {
     const removeCatBtn = e.target.closest("[data-remove-category]");
     if (!removeCatBtn) return;
 
     const catName = removeCatBtn.getAttribute("data-remove-category");
     let current = loadUserProjects();
     current = current.filter((p) => p.displayCategory !== catName);
-    saveUserProjects(current);
+    await saveUserProjects(current);
 
     renderProjects();
     filterFunc("all");
@@ -742,23 +907,7 @@ if (projectCategoryList) {
 }
 
 // ---- CERTIFICATION ADMIN ----
-const loadCerts = () => {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEYS.certs);
-    return stored ? JSON.parse(stored) : [];
-  } catch (e) {
-    console.error("Failed to load certifications from localStorage", e);
-    return [];
-  }
-};
-
-const saveCerts = (certs) => {
-  try {
-    localStorage.setItem(STORAGE_KEYS.certs, JSON.stringify(certs));
-  } catch (e) {
-    console.error("Failed to save certifications to localStorage", e);
-  }
-};
+// loadCerts and saveCerts are now defined above in the data loading section
 
 const certAdminForm = document.getElementById("cert-admin-form");
 const certAdminList = document.getElementById("cert-admin-list");
@@ -1007,18 +1156,25 @@ if (certAdminForm) {
       });
     }
 
-    saveCerts(certs);
+    const jsonSaved = await saveCerts(certs);
     certAdminForm.reset();
     editingCertId = null;
     editingCertImage = null;
     const span = certAdminForm.querySelector(".form-btn span");
     if (span) span.textContent = "Add Certification";
     renderCertifications();
+    
+    // Show success message
+    if (jsonSaved) {
+      alert("✓ Certification saved successfully!\n\nNext steps:\n1. Open GitHub Desktop\n2. Commit the files (assets/data/certificates.json and assets/certificates/)\n3. Push to GitHub\n\nAll users will see this certification after you push!");
+    } else {
+      alert("✓ Certification saved to localStorage!\n\nNote: JSON file could not be saved automatically. Please commit and push manually.");
+    }
   });
 }
 
 if (certAdminList) {
-  certAdminList.addEventListener("click", function (e) {
+  certAdminList.addEventListener("click", async function (e) {
     const removeBtn = e.target.closest("[data-remove-cert]");
     const editBtn = e.target.closest("[data-edit-cert]");
 
@@ -1026,7 +1182,7 @@ if (certAdminList) {
       const id = removeBtn.getAttribute("data-remove-cert");
       let certs = loadCerts();
       certs = certs.filter((c) => c.id !== id);
-      saveCerts(certs);
+      await saveCerts(certs);
       renderCertifications();
       return;
     }

@@ -1,17 +1,22 @@
 # Admin Panel Guide - File Management
 
 ## Overview
-The admin panel allows you to add projects and certifications locally. When you upload images, they need to be saved to your project's `assets/images/` directory so they can be tracked by Git and pushed to GitHub.
+The admin panel allows you to add projects and certifications that will be visible to **all users** of your portfolio. When you upload content:
+- **Images** are saved to `assets/projects/` or `assets/certificates/` directories
+- **Data** (project/certificate information) is saved to JSON files in `assets/data/` directory
+- All files are automatically saved and ready to be committed to Git
+
+**Important**: Only you (the admin) can access the admin panel. All uploaded content is visible to everyone who visits your portfolio.
 
 ## How to Use
 
-### Step 1: Select Your Project Directory (Recommended)
-1. Open the admin panel and log in
-2. Click the **"Select Project Directory"** button at the top
-3. Navigate to and select your project folder (the one containing `index.html`)
-4. This allows files to be saved automatically to `assets/images/`
+### Step 1: Access Admin Panel
+1. Click the **"Admin Panel"** button in the sidebar (or navigate to Admin page)
+2. Enter your admin password to log in
+3. The system will automatically request directory access when you upload your first file
+4. Grant access to your project folder (the one containing `index.html`)
 
-**Note:** This feature works best in Chrome/Edge browsers. If not available, files will be downloaded instead.
+**Note:** This feature works best in Chrome/Edge browsers. The File System Access API is required to save files automatically.
 
 ### Step 2: Adding Projects
 1. Fill in the project form:
@@ -20,8 +25,9 @@ The admin panel allows you to add projects and certifications locally. When you 
    - **Image**: Click to upload an image file
    - **Link**: Project URL (GitHub/Live demo)
 2. Submit the form
-3. If directory is selected: File is saved automatically to `assets/images/`
-4. If not: File downloads - manually save it to `assets/images/` folder
+3. The image is automatically saved to `assets/projects/` directory
+4. The project data is saved to `assets/data/projects.json`
+5. **All users will immediately see the new project** when they visit your portfolio
 
 ### Step 3: Adding Certifications
 1. Fill in the certification form:
@@ -31,28 +37,33 @@ The admin panel allows you to add projects and certifications locally. When you 
    - **Link**: Certificate URL
    - **Image**: Upload certificate image
 2. Submit the form
-3. File is saved automatically (if directory selected) or downloaded
+3. The image is automatically saved to `assets/certificates/` directory
+4. The certificate data is saved to `assets/data/certificates.json`
+5. **All users will immediately see the new certification** when they visit your portfolio
 
-### Step 4: Ensuring Git Tracks Your Files
+### Step 4: Committing Changes to GitHub
 
-After uploading files through the admin panel:
+After uploading content through the admin panel:
 
-1. **If files were saved automatically:**
-   - Open GitHub Desktop
-   - You should see the new image files in the "Changes" tab
-   - If not visible, try refreshing GitHub Desktop (View → Refresh or press F5)
+1. **Files are automatically saved:**
+   - Image files → `assets/projects/` or `assets/certificates/`
+   - Data files → `assets/data/projects.json` and `assets/data/certificates.json`
 
-2. **If files were downloaded:**
-   - Manually copy the downloaded files to `assets/images/` folder
-   - Open GitHub Desktop
-   - The files should appear in the "Changes" tab
+2. **Commit to Git:**
+   - Open GitHub Desktop (or use Git command line)
+   - You should see the new files in the "Changes" tab:
+     - New image files in `assets/projects/` or `assets/certificates/`
+     - Updated JSON files in `assets/data/`
+   - If not visible, refresh GitHub Desktop (View → Refresh or F5)
 
-3. **If files still don't appear:**
-   - Check that files are in `assets/images/` directory
-   - Ensure `.gitignore` doesn't ignore image files (it shouldn't with the current setup)
-   - Try staging files manually in GitHub Desktop:
-     - Right-click on the file → "Stage All"
-     - Or use the "+" button next to each file
+3. **Stage and commit:**
+   - Stage all changes (or select specific files)
+   - Write a commit message (e.g., "Add new project: Data Science Dashboard")
+   - Push to GitHub
+
+4. **After pushing to GitHub:**
+   - All users visiting your portfolio will see the new content
+   - The JSON files ensure data is shared across all visitors
 
 ## Troubleshooting
 
@@ -75,9 +86,29 @@ After uploading files through the admin panel:
 - **Projects**: `project-{title}.{extension}` (e.g., `project-data-science-project.jpg`)
 - **Certifications**: `cert-{title}.{extension}` (e.g., `cert-google-data-analytics.png`)
 
+## Data Storage
+
+### How It Works
+- **For All Users**: Data is loaded from JSON files (`assets/data/projects.json` and `assets/data/certificates.json`)
+- **For Admin**: When you add/edit content, it's saved to:
+  1. JSON files (visible to all users)
+  2. localStorage (for immediate preview)
+
+### File Structure
+```
+assets/
+├── data/
+│   ├── projects.json      # All project data (visible to everyone)
+│   └── certificates.json  # All certificate data (visible to everyone)
+├── projects/              # Project images
+└── certificates/          # Certificate images
+```
+
 ## Important Notes
-- All data (projects, certifications) is stored in browser localStorage
-- Image files are saved to `assets/images/` directory
-- Make sure to commit both the localStorage data (stored in browser) and the image files
-- The admin panel is for **local use only** - it won't work when deployed to GitHub Pages
+- ✅ **Admin-only access**: Only you can log in to the admin panel
+- ✅ **Public content**: All uploaded content is visible to all users
+- ✅ **Git-friendly**: All data is stored in JSON files that can be committed to Git
+- ✅ **Works on GitHub Pages**: The system works both locally and when deployed
+- ⚠️ **Browser requirement**: File System Access API (Chrome/Edge) needed to save files automatically
+- ⚠️ **Always commit**: After adding content, commit the JSON files and images to Git so they're available to all users
 

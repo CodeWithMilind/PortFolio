@@ -485,6 +485,36 @@ main {
   color: var(--light-gray);
 }
 
+.cv-download-btn {
+  width: 100%;
+  padding: 12px 20px;
+  margin-top: 15px;
+  background: var(--orange-yellow-crayola);
+  color: var(--eerie-black-1);
+  border: none;
+  border-radius: 12px;
+  font-size: var(--fs-7);
+  font-weight: var(--fw-600);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all var(--transition-1);
+  box-shadow: var(--shadow-2);
+}
+
+.cv-download-btn:hover {
+  background: var(--text-gradient-yellow);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-3);
+}
+
+.cv-download-btn ion-icon {
+  font-size: 18px;
+}
+
 .sidebar-admin-btn {
   margin: 16px auto 0;
   padding: 8px 16px;
