@@ -6,5 +6,21 @@
     "date": "Aug 2025",
     "link": "https://s3uploadobject.s3.amazonaws.com/erp_webinar_certificate/erp_enroll_certificate/COCMPL25091617580132244165.pdf",
     "image": "./assets/certificates/cert-certified-data-scientist.jpg"
+  },
+  {
+    "id": "miih46fnb4k5hv",
+    "title": "Data Science NOC",
+    "issuer": "Datamites",
+    "date": "Aug 2025",
+    "link": "https://s3uploadobject.s3.amazonaws.com/erp_webinar_certificate/erp_enroll_certificate/NOC25090217568093756482.pdf",
+    "image": "./assets/certificates/cert-data-science-noc.jpg"
+  },
+  {
+    "id": "miih5oq0f0knpw",
+    "title": "Data Science Intern",
+    "issuer": "Rubixe AI Solutions",
+    "date": "APR 2025 - Nov 2025",
+    "link": "https://s3uploadobject.s3.amazonaws.com/erp_webinar_certificate/erp_enroll_certificate/RX1763978472.pdf",
+    "image": "./assets/certificates/cert-data-science-intern.jpg"
   }
 ]
