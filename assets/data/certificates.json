@@ -22,5 +22,13 @@
     "date": "APR 2025 - Nov 2025",
     "link": "https://s3uploadobject.s3.amazonaws.com/erp_webinar_certificate/erp_enroll_certificate/RX1763978472.pdf",
     "image": "./assets/certificates/cert-data-science-intern.jpg"
+  },
+  {
+    "id": "mioaree23if3c9",
+    "title": "Data Vizualization - Tata",
+    "issuer": "Tata & Forage",
+    "date": "Dec 2025",
+    "link": "https://www.linkedin.com/in/milind-chaudhari-604734237/details/certifications/1764610135922/single-media-viewer?type=DOCUMENT&profileId=ACoAADsE1WQB4weVopSW9QlqrU9Pkky4cDD2ug8&lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_certifications_details%3BV3F%2Fh7S8RK2yqUU%2FA6P%2BXw%3D%3D",
+    "image": "./assets/certificates/cert-data-vizualization-tata.jpg"
   }
 ]
