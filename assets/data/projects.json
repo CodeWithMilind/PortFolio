@@ -34,5 +34,14 @@
     "image": "./assets/projects/project-itsm-ml-client-project.png",
     "link": "https://github.com/CodeWithMilind/Data-Science---Github/tree/main/Internship/Client%20Project",
     "isDefault": false
+  },
+  {
+    "id": "mjspe7e9jmixw7",
+    "title": "Employee Performance Prediction",
+    "category": "data science",
+    "displayCategory": "Data Science",
+    "image": "./assets/projects/project-employee-performance-prediction.jpg",
+    "link": "https://iammilind.pythonanywhere.com/",
+    "isDefault": false
   }
 ]
