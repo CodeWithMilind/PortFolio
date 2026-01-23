@@ -43,5 +43,14 @@
     "image": "./assets/projects/project-employee-performance-prediction.jpg",
     "link": "https://iammilind.pythonanywhere.com/",
     "isDefault": false
+  },
+  {
+    "id": "mkr9aqj6fefay1",
+    "title": "Data4Viz - Automated Data Sci Pipeline",
+    "category": "ai engineering",
+    "displayCategory": "AI Engineering",
+    "image": "./assets/projects/project-data4viz-automated-data-sci-pipeline.jpeg",
+    "link": "https://github.com/CodeWithMilind/Data4Viz",
+    "isDefault": false
   }
 ]
