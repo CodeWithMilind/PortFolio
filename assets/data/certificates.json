@@ -1,4 +1,6 @@
 [
+
+
   {
     "id": "miii4jjxquzvk2",
     "title": "Certified Data Scientist",
@@ -24,6 +26,15 @@
     "image": "./assets/certificates/cert-data-science-intern.jpg"
   },
   {
+    "id": "mjsp92o1wmlqv2",
+    "title": "Data Science - IABAC",
+    "issuer": "IABAC",
+    "date": "27 Dec 2025",
+    "link": "https://iabac.org/certifications/verify-certificate",
+    "image": "./assets/certificates/cert-data-science-iabac.jpg"
+  },
+
+  {
     "id": "mioaree23if3c9",
     "title": "Data Vizualization - Tata",
     "issuer": "Tata & Forage",
@@ -31,12 +42,15 @@
     "link": "https://www.linkedin.com/in/milind-chaudhari-604734237/details/certifications/1764610135922/single-media-viewer?type=DOCUMENT&profileId=ACoAADsE1WQB4weVopSW9QlqrU9Pkky4cDD2ug8&lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base_certifications_details%3BV3F%2Fh7S8RK2yqUU%2FA6P%2BXw%3D%3D",
     "image": "./assets/certificates/cert-data-vizualization-tata.jpg"
   },
-  {
-    "id": "mjsp92o1wmlqv2",
-    "title": "Data Science - IABAC",
-    "issuer": "IABAC",
-    "date": "27 Dec 2025",
-    "link": "https://iabac.org/certifications/verify-certificate",
-    "image": "./assets/certificates/cert-data-science-iabac.jpg"
+
+    {
+    "id": "miiinasscom",
+    "title": "NASSCOM - Certified Data Scientist",
+    "issuer": "FutureSkill Prime",
+    "date": "Feb 2026",
+    "link": "https://fsp-assessment-certificates.s3.ap-southeast-1.amazonaws.com/%27/s3/buckets/fsp-assessment-certificates%27/Milind%2BNitin%2BChaudhari_156429340.pdf.pdf",
+    "image": "./assets/certificates/cert-nasscom-data-scientist.jpg"
   }
+
+  
 ]
