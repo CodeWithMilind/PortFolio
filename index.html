@@ -1003,6 +1003,301 @@
   <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
   <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 
+  <!--
+    - Chatbot Widget
+  -->
+  <style>
+    /* Chatbot Widget Styles */
+    #chatbot-widget {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      z-index: 1000;
+      font-family: var(--ff-poppins);
+    }
+
+    #chatbot-toggle {
+      width: 55px;
+      height: 55px;
+      border-radius: 50%;
+      background: var(--bg-gradient-onyx);
+      border: 1px solid var(--jet);
+      color: var(--orange-yellow-crayola);
+      font-size: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: var(--shadow-2);
+      transition: var(--transition-1);
+    }
+
+    #chatbot-toggle:hover {
+      transform: scale(1.1);
+      box-shadow: var(--shadow-3);
+    }
+
+    #chatbot-window {
+      position: absolute;
+      bottom: 75px;
+      right: 0;
+      width: 320px;
+      height: 450px;
+      background: var(--eerie-black-2);
+      border: 1px solid var(--jet);
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-5);
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(20px) scale(0.9);
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    #chatbot-window.active {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: all;
+    }
+
+    #chatbot-header {
+      padding: 15px 20px;
+      background: var(--bg-gradient-onyx);
+      border-bottom: 1px solid var(--jet);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .chatbot-header-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--white-1);
+      font-weight: var(--fw-600);
+      font-size: var(--fs-4);
+    }
+
+    #chatbot-close {
+      background: none;
+      border: none;
+      color: var(--light-gray);
+      font-size: 24px;
+      cursor: pointer;
+      transition: var(--transition-1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #chatbot-close:hover {
+      color: var(--orange-yellow-crayola);
+    }
+
+    #chatbot-messages {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      scrollbar-width: thin;
+      scrollbar-color: var(--orange-yellow-crayola) var(--jet);
+    }
+
+    #chatbot-messages::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    #chatbot-messages::-webkit-scrollbar-track {
+      background: var(--jet);
+    }
+
+    #chatbot-messages::-webkit-scrollbar-thumb {
+      background: var(--orange-yellow-crayola);
+      border-radius: 10px;
+    }
+
+    .chatbot-message {
+      padding: 10px 15px;
+      border-radius: 12px;
+      font-size: var(--fs-6);
+      max-width: 85%;
+      line-height: 1.6;
+      animation: messageFadeIn 0.3s ease forwards;
+    }
+
+    @keyframes messageFadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .bot-msg {
+      align-self: flex-start;
+      background: var(--bg-gradient-jet);
+      color: var(--light-gray);
+      border: 1px solid var(--jet);
+      border-bottom-left-radius: 2px;
+    }
+
+    .user-msg {
+      align-self: flex-end;
+      background: var(--orange-yellow-crayola);
+      color: var(--smoky-black);
+      font-weight: var(--fw-500);
+      border-bottom-right-radius: 2px;
+    }
+
+    #chatbot-input-container {
+      padding: 15px 20px;
+      border-top: 1px solid var(--jet);
+      display: flex;
+      gap: 12px;
+      background: var(--bg-gradient-onyx);
+    }
+
+    #chatbot-input {
+      flex: 1;
+      background: var(--eerie-black-1);
+      border: 1px solid var(--jet);
+      border-radius: 10px;
+      padding: 10px 15px;
+      color: var(--white-2);
+      font-size: var(--fs-6);
+      transition: var(--transition-1);
+    }
+
+    #chatbot-input:focus {
+      outline: none;
+      border-color: var(--orange-yellow-crayola);
+    }
+
+    #chatbot-send {
+      background: var(--orange-yellow-crayola);
+      color: var(--smoky-black);
+      border: none;
+      border-radius: 10px;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      cursor: pointer;
+      transition: var(--transition-1);
+    }
+
+    #chatbot-send:hover {
+      background: var(--vegas-gold);
+      transform: translateY(-2px);
+    }
+
+    /* Mobile responsive */
+    @media (max-width: 580px) {
+      #chatbot-widget {
+        bottom: 20px;
+        right: 20px;
+      }
+      #chatbot-window {
+        width: calc(100vw - 40px);
+        height: 400px;
+        bottom: 70px;
+      }
+    }
+  </style>
+
+  <div id="chatbot-widget">
+    <button id="chatbot-toggle" title="Ask Me">
+      <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
+    </button>
+    
+    <div id="chatbot-window">
+      <div id="chatbot-header">
+        <div class="chatbot-header-info">
+          <span class="header-icon">🤖</span>
+          <span class="header-title">Ask Me</span>
+        </div>
+        <button id="chatbot-close">
+          <ion-icon name="close-outline"></ion-icon>
+        </button>
+      </div>
+      
+      <div id="chatbot-messages">
+        <div class="chatbot-message bot-msg">Hello! I am your portfolio assistant. How can I help you today?</div>
+      </div>
+      
+      <div id="chatbot-input-container">
+        <input type="text" id="chatbot-input" placeholder="Type a message...">
+        <button id="chatbot-send">
+          <ion-icon name="paper-plane-outline"></ion-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      const toggleBtn = document.getElementById('chatbot-toggle');
+      const closeBtn = document.getElementById('chatbot-close');
+      const chatWindow = document.getElementById('chatbot-window');
+      const sendBtn = document.getElementById('chatbot-send');
+      const input = document.getElementById('chatbot-input');
+      const messagesContainer = document.getElementById('chatbot-messages');
+
+      const responses = {
+        "tell me about you": "I am a Data Scientist and AI Developer focused on building predictive models and automation tools. I specialize in Python, Machine Learning, and SQL.",
+        "projects": "I have worked on several projects including Home Loan Prediction, Portuguese Bank Marketing, and a CNN-based Rice Leaf Classification system. Check the 'Projects' section for more details!",
+        "contact": "You can reach me at codewithmilind@gmail.com or through the contact form on this website.",
+        "default": "I am your portfolio assistant. Feel free to ask about me, my projects, or how to contact me!"
+      };
+
+      function toggleChat() {
+        chatWindow.classList.toggle('active');
+        if (chatWindow.classList.contains('active')) {
+          input.focus();
+        }
+      }
+
+      function addMessage(text, type) {
+        const msgDiv = document.createElement('div');
+        msgDiv.classList.add('chatbot-message', type + '-msg');
+        msgDiv.textContent = text;
+        messagesContainer.appendChild(msgDiv);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      }
+
+      function handleSend() {
+        const text = input.value.trim();
+        if (!text) return;
+
+        addMessage(text, 'user');
+        const lowerText = text.toLowerCase();
+        input.value = '';
+
+        setTimeout(() => {
+          let response = responses.default;
+          if (lowerText.includes('about you') || lowerText.includes('who are you') || lowerText.includes('intro')) {
+            response = responses["tell me about you"];
+          } else if (lowerText.includes('project')) {
+            response = responses["projects"];
+          } else if (lowerText.includes('contact') || lowerText.includes('email') || lowerText.includes('phone')) {
+            response = responses["contact"];
+          }
+          addMessage(response, 'bot');
+        }, 600);
+      }
+
+      toggleBtn.addEventListener('click', toggleChat);
+      closeBtn.addEventListener('click', toggleChat);
+      sendBtn.addEventListener('click', handleSend);
+      input.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') handleSend();
+      });
+    })();
+  </script>
+
 </body>
 
 </html>
