@@ -62,28 +62,11 @@ const STORAGE_KEYS = {
   certs: "mc_portfolio_certs"
 };
 
-// Global data storage (loaded from JSON files and localStorage)
+// Global data storage (loaded from JSON files)
 let globalProjectsData = [];
 let globalCertificationsData = [];
 let dataLoaded = false;
 
-<<<<<<< Updated upstream
-/**
- * TASK 4: DATA SAFETY
- * Merges JSON data with localStorage data safely.
- * LocalStorage items with the same ID overwrite JSON items.
- */
-const mergeDataSafely = (jsonArr, localArr) => {
-  const merged = [...localArr];
-  const localIds = new Set(localArr.map(item => item.id));
-  
-  jsonArr.forEach(item => {
-    if (!localIds.has(item.id)) {
-      merged.push(item);
-    }
-  });
-  return merged;
-=======
 // Load data from JSON files (for all users)
 const loadDataFromJSON = async () => {
   if (dataLoaded) return;
@@ -158,130 +141,72 @@ const loadDataFromJSON = async () => {
   if (typeof renderAdminProjects === 'function') {
     renderAdminProjects();
   }
->>>>>>> Stashed changes
 };
 
-/**
- * TASK 1: FIX PROJECT FETCHING
- * Loads projects from JSON file and merges with localStorage.
- */
-const loadProjects = async () => {
+// Save data to JSON file (admin only, using File System Access API)
+const saveDataToJSONFile = async (data, filename) => {
+  if (!isAdminAuthed) {
+    console.error("Only admin can save data to JSON files");
+    return false;
+  }
+
   try {
-    let jsonProjects = [];
-    // TASK 5: DEBUG FIXES - Try-catch with proper path
-    const response = await fetch('./assets/data/projects.json');
-    if (response.ok) {
-      jsonProjects = await response.json();
-    } else {
-      console.warn("Could not fetch projects.json. Status:", response.status);
+    // Check if File System Access API is available
+    if (!('showDirectoryPicker' in window)) {
+      console.warn("File System Access API not available. Data saved to localStorage only.");
+      return false;
     }
 
-    // TASK 2: ADD FALLBACK
-    const localProjects = JSON.parse(localStorage.getItem(STORAGE_KEYS.projects) || "[]");
+    // If we don't have directory handle yet, request it
+    if (!projectDirectoryHandle) {
+      const hasAccess = await requestProjectDirectory();
+      if (!hasAccess) {
+        console.warn("Directory access denied. Data saved to localStorage only.");
+        return false;
+      }
+    }
+
+    // Navigate to assets/data directory
+    const assetsHandle = await projectDirectoryHandle.getDirectoryHandle('assets', { create: true });
+    const dataHandle = await assetsHandle.getDirectoryHandle('data', { create: true });
     
-    // TASK 4: DATA SAFETY - Merge safely
-    globalProjectsData = mergeDataSafely(jsonProjects, localProjects);
-    console.log("✓ Projects loaded and synced:", globalProjectsData.length);
+    // Create/update JSON file
+    const fileHandle = await dataHandle.getFileHandle(filename, { create: true });
+    const writable = await fileHandle.createWritable();
+    await writable.write(JSON.stringify(data, null, 2));
+    await writable.close();
     
-    return globalProjectsData;
+    console.log(`✓ Data saved to assets/data/${filename}`);
+    return true;
   } catch (error) {
-    // TASK 5: DEBUG FIXES - Handle errors
-    console.error("Error in loadProjects:", error);
-    globalProjectsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.projects) || "[]");
-    return globalProjectsData;
+    console.error(`Error saving ${filename}:`, error);
+    return false;
   }
 };
 
-/**
- * TASK 3: FIX ADMIN PANEL SYNC
- * Implementation of CRUD functions for projects.
- */
-const addProject = async (newProject) => {
-  try {
-    globalProjectsData.push(newProject);
-    saveProjectsToLocal();
-    renderAllUI();
-    console.log("✓ Project added:", newProject.title);
-  } catch (error) {
-    console.error("Error adding project:", error);
-  }
+// Load projects (from JSON files - visible to all users)
+const loadUserProjects = () => {
+  return globalProjectsData || [];
 };
 
-const updateProject = async (id, updatedData) => {
-  try {
-    const index = globalProjectsData.findIndex(p => p.id === id);
-    if (index !== -1) {
-      globalProjectsData[index] = { ...globalProjectsData[index], ...updatedData };
-      saveProjectsToLocal();
-      renderAllUI();
-      console.log("✓ Project updated:", updatedData.title);
-    }
-  } catch (error) {
-    console.error("Error updating project:", error);
-  }
-};
-
-const deleteProject = async (id) => {
-  try {
-    globalProjectsData = globalProjectsData.filter(p => p.id !== id);
-    saveProjectsToLocal();
-    renderAllUI();
-    console.log("✓ Project deleted:", id);
-  } catch (error) {
-    console.error("Error deleting project:", error);
-  }
-};
-
-// Helper to save current global state to localStorage
-const saveProjectsToLocal = () => {
-  localStorage.setItem(STORAGE_KEYS.projects, JSON.stringify(globalProjectsData));
-  
-  // Also try to save to JSON file if admin is authenticated (optional enhancement)
-  if (isAdminAuthed && typeof saveDataToJSONFile === 'function') {
-    saveDataToJSONFile(globalProjectsData, 'projects.json');
-  }
-};
-
-// Unified render function to keep everything in sync
-const renderAllUI = () => {
-  renderProjects();
-  renderAdminProjects();
-  if (typeof filterFunc === 'function') {
-    filterFunc("all");
-  }
-};
-
-// Load certificates (similar logic to projects)
-const loadCerts = async () => {
-  try {
-    let jsonCerts = [];
-    const response = await fetch('./assets/data/certificates.json');
-    if (response.ok) {
-      jsonCerts = await response.json();
-    }
-    const localCerts = JSON.parse(localStorage.getItem(STORAGE_KEYS.certs) || "[]");
-    globalCertsData = mergeDataSafely(jsonCerts, localCerts);
-    return globalCertsData;
-  } catch (error) {
-    console.error("Error loading certificates:", error);
-    globalCertsData = JSON.parse(localStorage.getItem(STORAGE_KEYS.certs) || "[]");
-    return globalCertsData;
-  }
-};
-
-// Existing saveUserProjects/saveCerts can be kept or redirected to our new CRUD
+// Save projects (admin only - saves to both localStorage and JSON file)
 const saveUserProjects = async (projects) => {
+  // Update global data
   globalProjectsData = projects;
-  saveProjectsToLocal();
+  
+  // Save to localStorage for immediate preview
+  try {
+    localStorage.setItem(STORAGE_KEYS.projects, JSON.stringify(projects));
+  } catch (e) {
+    console.error("Failed to save projects to localStorage", e);
+  }
+  
+  // Save to JSON file (admin only)
+  if (isAdminAuthed) {
+    await saveDataToJSONFile(projects, 'projects.json');
+  }
 };
 
-<<<<<<< Updated upstream
-const saveCerts = async (certs) => {
-  globalCertsData = certs;
-  localStorage.setItem(STORAGE_KEYS.certs, JSON.stringify(certs));
-  if (isAdminAuthed && typeof saveDataToJSONFile === 'function') {
-    await saveDataToJSONFile(certs, 'certificates.json');
-=======
 // Load certificates (from JSON files - visible to all users)
 const loadCerts = () => {
   return globalCertificationsData || [];
@@ -302,14 +227,13 @@ const saveCerts = async (certs) => {
   // Save to JSON file (admin only)
   if (isAdminAuthed) {
     await saveDataToJSONFile(certs, 'certifications.json');
->>>>>>> Stashed changes
   }
 };
 
 // default projects (empty so everything comes from Admin)
 const defaultProjects = [];
 
-const getAllProjects = () => globalProjectsData;
+const getAllProjects = () => [...defaultProjects, ...loadUserProjects()];
 
 const projectListElem = document.getElementById("project-list");
 
@@ -416,18 +340,7 @@ const renderProjects = () => {
 };
 
 // Load data and render on page load
-<<<<<<< Updated upstream
-const init = async () => {
-  await loadProjects();
-  await loadCerts();
-  renderProjects();
-  renderCertifications();
-};
-
-init();
-=======
 loadDataFromJSON();
->>>>>>> Stashed changes
 
 // custom select & filter variables
 const select = document.querySelector("[data-select]");
@@ -779,7 +692,7 @@ if (projectCategorySelect) {
 const renderAdminProjects = () => {
   if (!projectAdminList) return;
 
-  const userProjects = globalProjectsData;
+  const userProjects = loadUserProjects();
   projectAdminList.innerHTML = "";
 
   if (!userProjects.length) {
@@ -818,7 +731,7 @@ const renderAdminProjects = () => {
 const renderAdminProjectCategories = () => {
   if (!projectCategoryList) return;
 
-  const userProjects = globalProjectsData;
+  const userProjects = loadUserProjects();
   const customCategories = Array.from(
     new Set(
       userProjects
@@ -909,34 +822,49 @@ if (projectAdminForm) {
 
     const categoryLower = categoryInput.toLowerCase();
 
+    const current = loadUserProjects();
+
     if (editingProjectId) {
-      await updateProject(editingProjectId, {
-        title,
-        category: categoryLower,
-        displayCategory: categoryInput,
-        image: imagePath,
-        link: link
-      });
+      const idx = current.findIndex((p) => p.id === editingProjectId);
+      if (idx !== -1) {
+        current[idx] = {
+          ...current[idx],
+          title: title,
+          category: categoryLower,
+          displayCategory: categoryInput,
+          image: imagePath,
+          link: link
+        };
+      }
     } else {
-      await addProject({
+      const newProject = {
         id: createId(),
-        title,
+        title: title,
         category: categoryLower,
         displayCategory: categoryInput,
         image: imagePath,
         link: link,
         isDefault: false
-      });
+      };
+      current.push(newProject);
     }
+    const jsonSaved = await saveUserProjects(current);
 
     projectAdminForm.reset();
     editingProjectId = null;
     const submitSpan = projectAdminForm.querySelector(".form-btn span");
     if (submitSpan) submitSpan.textContent = "Add Project";
     toggleProjectOtherCategory();
+    renderProjects();
+    filterFunc("all");
+    renderAdminProjects();
     
     // Show success message
-    alert("✓ Project saved successfully! Data is synced and UI updated.");
+    if (jsonSaved) {
+      alert("✓ Project saved successfully!\n\nNext steps:\n1. Open GitHub Desktop\n2. Commit the files (assets/data/projects.json and assets/projects/)\n3. Push to GitHub\n\nAll users will see this project after you push!");
+    } else {
+      alert("✓ Project saved to localStorage!\n\nNote: JSON file could not be saved automatically. Please commit and push manually.");
+    }
   });
 }
 
@@ -946,16 +874,21 @@ if (projectAdminList) {
     const editBtn = e.target.closest("[data-edit-project]");
 
     if (removeBtn) {
-      if (confirm("Are you sure you want to delete this project?")) {
-        const id = removeBtn.getAttribute("data-remove-project");
-        await deleteProject(id);
-      }
+      const id = removeBtn.getAttribute("data-remove-project");
+      let current = loadUserProjects();
+      current = current.filter((p) => p.id !== id);
+      await saveUserProjects(current);
+
+      renderProjects();
+      filterFunc("all");
+      renderAdminProjects();
       return;
     }
 
     if (editBtn && projectAdminForm) {
       const id = editBtn.getAttribute("data-edit-project");
-      const project = globalProjectsData.find((p) => p.id === id);
+      const current = loadUserProjects();
+      const project = current.find((p) => p.id === id);
       if (!project) return;
 
       const titleInput = projectAdminForm.querySelector('input[name="title"]');
@@ -1001,9 +934,13 @@ if (projectCategoryList) {
     if (!removeCatBtn) return;
 
     const catName = removeCatBtn.getAttribute("data-remove-category");
-    globalProjectsData = globalProjectsData.filter((p) => p.displayCategory !== catName);
-    saveProjectsToLocal();
-    renderAllUI();
+    let current = loadUserProjects();
+    current = current.filter((p) => p.displayCategory !== catName);
+    await saveUserProjects(current);
+
+    renderProjects();
+    filterFunc("all");
+    renderAdminProjects();
   });
 }
 

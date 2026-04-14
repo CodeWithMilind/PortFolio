@@ -1246,8 +1246,12 @@
       const input = document.getElementById('chatbot-input');
       const messagesContainer = document.getElementById('chatbot-messages');
 
-      let messageCount = 0;
-      const MAX_MESSAGES = 10;
+      const responses = {
+        "tell me about you": "I am a Data Scientist and AI Developer focused on building predictive models and automation tools. I specialize in Python, Machine Learning, and SQL.",
+        "projects": "I have worked on several projects including Home Loan Prediction, Portuguese Bank Marketing, and a CNN-based Rice Leaf Classification system. Check the 'Projects' section for more details!",
+        "contact": "You can reach me at codewithmilind@gmail.com or through the contact form on this website.",
+        "default": "I am your portfolio assistant. Feel free to ask about me, my projects, or how to contact me!"
+      };
 
       function toggleChat() {
         chatWindow.classList.toggle('active');
@@ -1265,45 +1269,22 @@
       }
 
       function handleSend() {
-        if (messageCount >= MAX_MESSAGES) {
-          addMessage("Limit reached. Please refresh.", 'bot');
-          input.disabled = true;
-          sendBtn.disabled = true;
-          return;
-        }
-
         const text = input.value.trim();
         if (!text) return;
 
         addMessage(text, 'user');
-        messageCount++;
         const lowerText = text.toLowerCase();
         input.value = '';
 
         setTimeout(() => {
-          let response = "I am your portfolio assistant. Feel free to ask about me, my projects, certifications, or how to contact me!";
-          
-          if (lowerText.includes('about') || lowerText.includes('who are you') || lowerText.includes('intro')) {
-            response = "I am a Data Scientist and AI Developer focused on building predictive models and automation tools. I specialize in Python, Machine Learning, and SQL.";
+          let response = responses.default;
+          if (lowerText.includes('about you') || lowerText.includes('who are you') || lowerText.includes('intro')) {
+            response = responses["tell me about you"];
           } else if (lowerText.includes('project')) {
-            // Dynamically list project titles if available in global scope
-            if (window.globalProjectsData && window.globalProjectsData.length > 0) {
-              const titles = window.globalProjectsData.map(p => p.title).slice(0, 5).join(", ");
-              response = `I have worked on several projects including: ${titles}, and more. Check the 'Projects' section for full details!`;
-            } else {
-              response = "I have worked on several Data Science and ML projects. Check the 'Projects' section for more details!";
-            }
-          } else if (lowerText.includes('cert') || lowerText.includes('qualification')) {
-            if (window.globalCertsData && window.globalCertsData.length > 0) {
-              const titles = window.globalCertsData.map(c => c.title).slice(0, 5).join(", ");
-              response = `My certifications include: ${titles}. You can see the full list in the 'Certifications' section.`;
-            } else {
-              response = "I hold various certifications in Data Science and AI. Please visit the 'Certifications' section for the full list.";
-            }
+            response = responses["projects"];
           } else if (lowerText.includes('contact') || lowerText.includes('email') || lowerText.includes('phone')) {
-            response = "You can reach me at codewithmilind@gmail.com. You can also use the contact form on this website!";
+            response = responses["contact"];
           }
-          
           addMessage(response, 'bot');
         }, 600);
       }
