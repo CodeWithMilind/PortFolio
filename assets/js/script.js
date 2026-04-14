@@ -64,83 +64,42 @@ const STORAGE_KEYS = {
 
 // Global data storage (loaded from JSON files)
 let globalProjectsData = [];
-let globalCertificationsData = [];
+let globalCertsData = [];
 let dataLoaded = false;
 
 // Load data from JSON files (for all users)
 const loadDataFromJSON = async () => {
-  if (dataLoaded) return;
+  if (dataLoaded) return; // Only load once
   
-  console.log("Fetching projects.json...");
   try {
+    // Load projects
     const projectsResponse = await fetch('./assets/data/projects.json');
     if (projectsResponse.ok) {
-      const data = await projectsResponse.json();
-      if (data && Array.isArray(data) && data.length > 0) {
-        globalProjectsData = data;
-        console.log("Projects data loaded successfully");
-      } else {
-        throw new Error("Projects data is empty or invalid");
-      }
+      globalProjectsData = await projectsResponse.json();
     } else {
-      throw new Error(`Failed to load projects.json: ${projectsResponse.status}`);
+      console.warn("Failed to load projects.json, using empty array");
+      globalProjectsData = [];
     }
   } catch (e) {
     console.error("Error loading projects.json:", e);
-    // Fallback to localStorage
-    try {
-      const savedProjects = localStorage.getItem(STORAGE_KEYS.projects);
-      if (savedProjects) {
-        globalProjectsData = JSON.parse(savedProjects);
-        console.log("Loaded projects from localStorage fallback");
-      } else {
-        globalProjectsData = [];
-      }
-    } catch (err) {
-      console.error("Error loading projects from localStorage:", err);
-      globalProjectsData = [];
-    }
+    globalProjectsData = [];
   }
 
-  console.log("Fetching certifications.json...");
   try {
-    const certsResponse = await fetch('./assets/data/certifications.json');
+    // Load certificates
+    const certsResponse = await fetch('./assets/data/certificates.json');
     if (certsResponse.ok) {
-      const data = await certsResponse.json();
-      if (data && Array.isArray(data) && data.length > 0) {
-        globalCertificationsData = data;
-        console.log("Certifications data loaded successfully");
-      } else {
-        throw new Error("Certifications data is empty or invalid");
-      }
+      globalCertsData = await certsResponse.json();
     } else {
-      throw new Error(`Failed to load certifications.json: ${certsResponse.status}`);
+      console.warn("Failed to load certificates.json, using empty array");
+      globalCertsData = [];
     }
   } catch (e) {
-    console.error("Error loading certifications.json:", e);
-    // Fallback to localStorage
-    try {
-      const savedCerts = localStorage.getItem(STORAGE_KEYS.certs);
-      if (savedCerts) {
-        globalCertificationsData = JSON.parse(savedCerts);
-        console.log("Loaded certifications from localStorage fallback");
-      } else {
-        globalCertificationsData = [];
-      }
-    } catch (err) {
-      console.error("Error loading certifications from localStorage:", err);
-      globalCertificationsData = [];
-    }
+    console.error("Error loading certificates.json:", e);
+    globalCertsData = [];
   }
   
   dataLoaded = true;
-  
-  // Ensure rendering happens ONLY after data is loaded
-  renderProjects();
-  renderCertifications();
-  if (typeof renderAdminProjects === 'function') {
-    renderAdminProjects();
-  }
 };
 
 // Save data to JSON file (admin only, using File System Access API)
@@ -209,13 +168,13 @@ const saveUserProjects = async (projects) => {
 
 // Load certificates (from JSON files - visible to all users)
 const loadCerts = () => {
-  return globalCertificationsData || [];
+  return globalCertsData || [];
 };
 
 // Save certificates (admin only - saves to both localStorage and JSON file)
 const saveCerts = async (certs) => {
   // Update global data
-  globalCertificationsData = certs;
+  globalCertsData = certs;
   
   // Save to localStorage for immediate preview
   try {
@@ -226,7 +185,7 @@ const saveCerts = async (certs) => {
   
   // Save to JSON file (admin only)
   if (isAdminAuthed) {
-    await saveDataToJSONFile(certs, 'certifications.json');
+    await saveDataToJSONFile(certs, 'certificates.json');
   }
 };
 
@@ -340,7 +299,10 @@ const renderProjects = () => {
 };
 
 // Load data and render on page load
-loadDataFromJSON();
+loadDataFromJSON().then(() => {
+  renderProjects();
+  renderCertifications();
+});
 
 // custom select & filter variables
 const select = document.querySelector("[data-select]");
@@ -926,7 +888,7 @@ if (projectAdminList) {
   });
 }
 
-// renderAdminProjects(); // Removed top-level call, handled by loadDataFromJSON()
+renderAdminProjects();
 
 if (projectCategoryList) {
   projectCategoryList.addEventListener("click", async function (e) {
@@ -1204,7 +1166,7 @@ if (certAdminForm) {
     
     // Show success message
     if (jsonSaved) {
-      alert("✓ Certification saved successfully!\n\nNext steps:\n1. Open GitHub Desktop\n2. Commit the files (assets/data/certifications.json and assets/certificates/)\n3. Push to GitHub\n\nAll users will see this certification after you push!");
+      alert("✓ Certification saved successfully!\n\nNext steps:\n1. Open GitHub Desktop\n2. Commit the files (assets/data/certificates.json and assets/certificates/)\n3. Push to GitHub\n\nAll users will see this certification after you push!");
     } else {
       alert("✓ Certification saved to localStorage!\n\nNote: JSON file could not be saved automatically. Please commit and push manually.");
     }
@@ -1251,4 +1213,4 @@ if (certAdminList) {
   });
 }
 
-// renderCertifications(); // Removed top-level call, handled by loadDataFromJSON()
+renderCertifications();

@@ -38,7 +38,7 @@ The admin panel allows you to add projects and certifications that will be visib
    - **Image**: Upload certificate image
 2. Submit the form
 3. The image is automatically saved to `assets/certificates/` directory
-4. The certificate data is saved to `assets/data/certifications.json`
+4. The certificate data is saved to `assets/data/certificates.json`
 5. **All users will immediately see the new certification** when they visit your portfolio
 
 ### Step 4: Committing Changes to GitHub
@@ -47,7 +47,7 @@ After uploading content through the admin panel:
 
 1. **Files are automatically saved:**
    - Image files → `assets/projects/` or `assets/certificates/`
-   - Data files → `assets/data/projects.json` and `assets/data/certifications.json`
+   - Data files → `assets/data/projects.json` and `assets/data/certificates.json`
 
 2. **Commit to Git:**
    - Open GitHub Desktop (or use Git command line)
@@ -89,7 +89,7 @@ After uploading content through the admin panel:
 ## Data Storage
 
 ### How It Works
-- **For All Users**: Data is loaded from JSON files (`assets/data/projects.json` and `assets/data/certifications.json`)
+- **For All Users**: Data is loaded from JSON files (`assets/data/projects.json` and `assets/data/certificates.json`)
 - **For Admin**: When you add/edit content, it's saved to:
   1. JSON files (visible to all users)
   2. localStorage (for immediate preview)
@@ -99,7 +99,7 @@ After uploading content through the admin panel:
 assets/
 ├── data/
 │   ├── projects.json      # All project data (visible to everyone)
-│   └── certifications.json # All certificate data (visible to everyone)
+│   └── certificates.json  # All certificate data (visible to everyone)
 ├── projects/              # Project images
 └── certificates/          # Certificate images
 ```
