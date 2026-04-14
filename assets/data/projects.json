@@ -52,5 +52,14 @@
     "image": "./assets/projects/project-data4viz-automated-data-sci-pipeline.jpeg",
     "link": "https://github.com/CodeWithMilind/Data4Viz-AI-EDA-Platform/blob/main/README.md",
     "isDefault": false
+  },
+  {
+    "id": "mnyialet9mk0qp",
+    "title": "AutoMail - AutoMail System",
+    "category": "automation",
+    "displayCategory": "Automation",
+    "image": "./assets/projects/project-automail-automail-system.jpg",
+    "link": "https://youtu.be/m3B3NDUcpyQ?si=UrtIA3QH9lvyF34z",
+    "isDefault": false
   }
 ]
