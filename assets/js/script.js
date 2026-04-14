@@ -302,6 +302,7 @@ const renderProjects = () => {
 loadDataFromJSON().then(() => {
   renderProjects();
   renderCertifications();
+  renderAdminProjects();   // 🔥 ADD THIS
 });
 
 // custom select & filter variables
