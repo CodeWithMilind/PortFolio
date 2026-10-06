@@ -162,8 +162,10 @@ const saveUserProjects = async (projects) => {
   
   // Save to JSON file (admin only)
   if (isAdminAuthed) {
-    await saveDataToJSONFile(projects, 'projects.json');
+    return await saveDataToJSONFile(projects, 'projects.json');
   }
+
+  return false;
 };
 
 // Load certificates (from JSON files - visible to all users)
@@ -185,8 +187,10 @@ const saveCerts = async (certs) => {
   
   // Save to JSON file (admin only)
   if (isAdminAuthed) {
-    await saveDataToJSONFile(certs, 'certificates.json');
+    return await saveDataToJSONFile(certs, 'certificates.json');
   }
+
+  return false;
 };
 
 // default projects (empty so everything comes from Admin)
@@ -278,8 +282,7 @@ const renderProjects = () => {
     li.dataset.category = categoryKey;
     const displayCategory = p.displayCategory || p.category || "Other";
 
-    li.innerHTML = `
-      <a href="${p.link || "#"}" target="_blank">
+    const projectContent = `
         <figure class="project-img">
           <div class="project-item-icon-box">
             <ion-icon name="eye-outline"></ion-icon>
@@ -288,8 +291,13 @@ const renderProjects = () => {
         </figure>
         <h3 class="project-title">${p.title}</h3>
         <p class="project-category">${displayCategory}</p>
-      </a>
+        ${p.description ? `<p class="project-description">${p.description}</p>` : ""}
+        ${p.technologies && p.technologies.length ? `<p class="project-technologies">${p.technologies.join(", ")}</p>` : ""}
     `;
+
+    li.innerHTML = p.link
+      ? `<a href="${p.link}" target="_blank" rel="noopener noreferrer">${projectContent}</a>`
+      : `<div>${projectContent}</div>`;
 
     projectListElem.appendChild(li);
   });
@@ -824,9 +832,9 @@ if (projectAdminForm) {
     
     // Show success message
     if (jsonSaved) {
-      alert("✓ Project saved successfully!\n\nNext steps:\n1. Open GitHub Desktop\n2. Commit the files (assets/data/projects.json and assets/projects/)\n3. Push to GitHub\n\nAll users will see this project after you push!");
+      alert("Project data and image saved to the selected local project folder. Review the files, then upload them to the VPS separately to publish.");
     } else {
-      alert("✓ Project saved to localStorage!\n\nNote: JSON file could not be saved automatically. Please commit and push manually.");
+      alert("Project is available in this page preview only. The JSON file was not saved; update the project data and image in your local project, then upload them to the VPS to publish.");
     }
   });
 }
@@ -1039,17 +1047,17 @@ const renderCertifications = () => {
         const li = document.createElement("li");
         li.className = "project-item active";
         
-        // Create image placeholder if no image
-        const imageSrc = c.image || "./assets/images/icon-learning.svg";
-        const imageAlt = c.title || "Certification";
+        const imageMarkup = c.image
+          ? `<img src="${c.image}" alt="${c.title || "Certification"}" loading="lazy">`
+          : "";
         
         li.innerHTML = `
           <a href="${c.link || "#"}" target="_blank">
-            <figure class="project-img">
+            <figure class="project-img${c.image ? "" : " project-img-placeholder"}">
               <div class="project-item-icon-box">
                 <ion-icon name="ribbon-outline"></ion-icon>
               </div>
-              <img src="${imageSrc}" alt="${imageAlt}" loading="lazy">
+              ${imageMarkup}
             </figure>
             <h3 class="project-title">${c.title}</h3>
             <p class="project-category">${c.issuer} • ${c.date}</p>
@@ -1167,9 +1175,9 @@ if (certAdminForm) {
     
     // Show success message
     if (jsonSaved) {
-      alert("✓ Certification saved successfully!\n\nNext steps:\n1. Open GitHub Desktop\n2. Commit the files (assets/data/certificates.json and assets/certificates/)\n3. Push to GitHub\n\nAll users will see this certification after you push!");
+      alert("Certification data and image saved to the selected local project folder. Review the files, then upload them to the VPS separately to publish.");
     } else {
-      alert("✓ Certification saved to localStorage!\n\nNote: JSON file could not be saved automatically. Please commit and push manually.");
+      alert("Certification is available in this page preview only. The JSON file was not saved; update the certificate data and any image in your local project, then upload them to the VPS to publish.");
     }
   });
 }

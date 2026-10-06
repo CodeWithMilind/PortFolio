@@ -1,36 +1,33 @@
 [
   {
-    "id": "miiiededt1s8pz",
-    "title": "Portuges Bank Marketing",
-    "category": "machine learning",
-    "displayCategory": "Machine Learning",
-    "image": "./assets/projects/project-portuges-bank-marketing.png",
-    "link": "https://github.com/CodeWithMilind/Data-Science---Github/tree/main/Internship/PRCP-1000-Portuges%20Bank",
+    "id": "mnyialet9mk0qp",
+    "title": "AutoMail - AI Email Automation System",
+    "category": "automation",
+    "displayCategory": "Automation",
+    "description": "Built an automated email workflow with API-integrated data pipelines and response generation.",
+    "technologies": ["Python", "n8n", "OpenAI API"],
+    "image": "./assets/projects/project-automail-automail-system.jpg",
+    "link": "https://youtu.be/m3B3NDUcpyQ?si=UrtIA3QH9lvyF34z",
     "isDefault": false
   },
   {
-    "id": "miiifnqi40244o",
-    "title": "CNN RiceLeaf Classification",
-    "category": "ai / deep learning",
-    "displayCategory": "AI / Deep Learning",
-    "image": "./assets/projects/project-cnn-riceleaf-classification.png",
-    "link": "https://github.com/CodeWithMilind/Data-Science---Github/tree/main/Internship/PRCP-1001-RiceLeaf",
-    "isDefault": false
-  },
-  {
-    "id": "miiiglmd1ysp26",
-    "title": "Home Loan Prediction",
-    "category": "machine learning",
-    "displayCategory": "Machine Learning",
-    "image": "./assets/projects/project-home-loan-prediction.png",
-    "link": "https://github.com/CodeWithMilind/Data-Science---Github/tree/main/Internship/PRCP-1006-HomeLoanDef",
+    "id": "mkr9aqj6fefay1",
+    "title": "Data4Viz - AI Data Analysis Platform",
+    "category": "data science",
+    "displayCategory": "Data Science",
+    "description": "Developed automated data cleaning, correlation analysis, statistical summaries, and model-assisted interpretation.",
+    "technologies": ["Python", "Pandas"],
+    "image": "./assets/projects/project-data4viz-automated-data-sci-pipeline.jpeg",
+    "link": "https://github.com/CodeWithMilind/Data4Viz-AI-EDA-Platform/blob/main/README.md",
     "isDefault": false
   },
   {
     "id": "miiiii2xyiec0z",
-    "title": "ITSM ML Client Project",
+    "title": "Predictive ITSM System",
     "category": "machine learning",
     "displayCategory": "Machine Learning",
+    "description": "Built classification models for service tasks with data pipelines and feature engineering workflows.",
+    "technologies": ["Python", "SQL"],
     "image": "./assets/projects/project-itsm-ml-client-project.png",
     "link": "https://github.com/CodeWithMilind/Data-Science---Github/tree/main/Internship/Client%20Project",
     "isDefault": false
@@ -38,28 +35,11 @@
   {
     "id": "mjspe7e9jmixw7",
     "title": "Employee Performance Prediction",
-    "category": "data science",
-    "displayCategory": "Data Science",
+    "category": "machine learning",
+    "displayCategory": "Machine Learning",
+    "description": "Developed a prediction model, integrated it into a Django application, and deployed the application.",
+    "technologies": ["Python", "Django"],
     "image": "./assets/projects/project-employee-performance-prediction.jpg",
-    "link": "https://iammilind.pythonanywhere.com/",
-    "isDefault": false
-  },
-  {
-    "id": "mkr9aqj6fefay1",
-    "title": "Data4Viz - Automated Data Sci Pipeline",
-    "category": "ai engineering",
-    "displayCategory": "AI Engineering",
-    "image": "./assets/projects/project-data4viz-automated-data-sci-pipeline.jpeg",
-    "link": "https://github.com/CodeWithMilind/Data4Viz-AI-EDA-Platform/blob/main/README.md",
-    "isDefault": false
-  },
-  {
-    "id": "mnyialet9mk0qp",
-    "title": "AutoMail - AutoMail System",
-    "category": "automation",
-    "displayCategory": "Automation",
-    "image": "./assets/projects/project-automail-automail-system.jpg",
-    "link": "https://youtu.be/m3B3NDUcpyQ?si=UrtIA3QH9lvyF34z",
     "isDefault": false
   }
 ]

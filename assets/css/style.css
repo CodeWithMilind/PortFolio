@@ -1125,6 +1125,17 @@ main {
   margin-bottom: 15px;
 }
 
+.project-img-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-gradient-onyx);
+}
+
+.project-img-placeholder .project-item-icon-box {
+  opacity: 1;
+}
+
 .project-img::before {
   content: "";
   position: absolute;
@@ -1195,6 +1206,24 @@ main {
   color: var(--light-gray-70);
   font-size: var(--fs-6);
   font-weight: var(--fw-300);
+}
+
+.project-description,
+.project-technologies {
+  margin: 8px 10px 0;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.project-description {
+  color: var(--light-gray);
+  font-size: var(--fs-7);
+  font-weight: var(--fw-300);
+}
+
+.project-technologies {
+  color: var(--vegas-gold);
+  font-size: var(--fs-8);
 }
 
 /* Certifications use the same grid layout as projects */
