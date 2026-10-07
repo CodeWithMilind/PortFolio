@@ -83,7 +83,12 @@ router.put('/profile', (req, res, next) => {
 
 for (const [table, def] of Object.entries(definitions)) {
   router.get(`/${table}`, (req, res, next) => {
-    try { return res.json(db.prepare(`SELECT * FROM ${table} ORDER BY ${orderBy}`).all().map((row) => decodeRow(table, row))); }
+    try {
+      const query = table === 'projects'
+        ? 'SELECT projects.*, categories.name AS category_name FROM projects LEFT JOIN categories ON categories.id = projects.category_id ORDER BY projects.display_order, projects.id'
+        : `SELECT * FROM ${table} ORDER BY ${orderBy}`;
+      return res.json(db.prepare(query).all().map((row) => decodeRow(table, row)));
+    }
     catch (error) { return next(error); }
   });
   router.post(`/${table}`, (req, res, next) => {

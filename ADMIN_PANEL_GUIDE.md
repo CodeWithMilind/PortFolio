@@ -1,29 +1,19 @@
-# Local Content Editor Guide
+# Portfolio Admin Guide
 
-## Important limits
+## How the admin panel works
 
-The Admin Panel is a browser-side content editing utility, not a secure CMS. Its passcode and authentication state are handled in public client-side code and browser storage. Do not rely on it to protect content or VPS files.
+The Admin Panel at the bottom of the sidebar authenticates with the Express backend. Login uses `POST /api/auth/login`, and the server keeps the authenticated session in an HTTP-only, same-site cookie. The browser does not save the password or an authentication flag. Admin writes also include a session-bound CSRF token.
 
-The panel can write only to a local project folder that you explicitly select in a compatible browser. It cannot write to the VPS. Changes are not published until the updated JSON and image files are uploaded separately.
+Run the backend with a valid `.env` and the SQLite database migrated. Create or update an administrator with `npm run create-admin` from the `server` directory. Serve the portfolio and backend on the same origin, with `/api` and `/uploads` routed to Express (as in the existing deployment architecture). The admin panel requires that same-origin routing; it does not use the browser File System Access API.
 
-## Requirements
+## Editing content
 
-- Use Chrome or Edge on `localhost` or an HTTPS site. The File System Access API is required.
-- Select the local project folder containing `index.html` when prompted.
-- If folder access is unavailable or denied, data edits may appear in the current page preview using `localStorage`; that data is not loaded after a page reload and is not shared with visitors. Adding a project image requires the File System Access API and folder access.
+The panel reads and writes profile, education, experience, categories, projects, certifications, awards, skills, and existing site settings through the authenticated `/api/admin` endpoints. Each section reports save status. Deletes require confirmation. A category referenced by projects cannot be deleted until those projects are reassigned or removed.
 
-## Adding content
+Choose an image or PDF and click that section's Save button to upload it. Image uploads accept JPEG, PNG, or WEBP up to 5 MB. CV uploads accept PDF up to 10 MB. The panel shows the currently stored file and previews a selected image before upload.
 
-Projects require a title, category, image, and URL. Project images are written to `assets/projects/`; records are written to `assets/data/projects.json`.
+## Public data and publishing
 
-Certifications require a title, issuer, date, and URL. An image is optional. Certificate images are written to `assets/certificates/`; records are written to `assets/data/certificates.json`.
+The database is the admin source of truth. The public sidebar profile (including the CV link and profile image), Resume Education and Experience sections, and Technical Skills section use values returned by the same-origin SQLite API; missing profile fields stay hidden. Projects, Categories, and Certifications also prefer the API, with projects and certifications falling back to `assets/data/projects.json` and `assets/data/certificates.json` if the API is unavailable or has no records. The JSON files remain in place and admin changes do not rewrite them. Other public sections have not been migrated.
 
-The page reports whether the JSON file was saved to the selected local folder. A successful local save is not a deployment. Review the changed files and upload them to the VPS using your normal deployment process.
-
-## Publishing changes
-
-1. Confirm the JSON and image files were written under the selected local project folder.
-2. Check that the image paths in the JSON match the saved files.
-3. Preview the site over HTTP(S) and verify the updated content.
-4. Upload the changed static files to the VPS. The browser panel does not perform this step.
-
+Existing images and JSON remain in place. New uploads are stored under the configured `UPLOAD_DIR`, with only relative paths stored in SQLite. Review database backups and upload files as part of the normal server backup process.

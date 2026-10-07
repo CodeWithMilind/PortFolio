@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Milind Chaudhari | Entry-level Data Scientist</title>
+  <title>Portfolio</title>
 
   <link rel="shortcut icon" href="./assets/images/logo.ico" type="image/x-icon">
   <link rel="stylesheet" href="./assets/css/style.css">
@@ -30,17 +30,17 @@
 
       <div class="sidebar-info">
 
-        <figure class="avatar-box" style="border-radius: 50%;">
-          <img src="./assets/images/m.jpg" alt="Milind Chaudhari" style="border-radius: 50%;" width="80">
+        <figure class="avatar-box" style="border-radius: 50%;" hidden>
+          <img id="profile-image" alt="" style="border-radius: 50%;" width="80" hidden>
         </figure>
 
-        <div class="info-content">
-          <h1 class="name" title="Milind Chaudhari">Milind Chaudhari</h1>
+        <div class="info-content" hidden>
+          <h1 id="profile-name" class="name" hidden></h1>
 
-          <p class="title">Entry-level Data Scientist</p>
+          <p id="profile-title" class="title" hidden></p>
         </div>
 
-        <a href="./assets/files/Milind_Chaudhari_CV.pdf" download="Milind_Chaudhari_CV.pdf" class="cv-download-btn">
+        <a id="profile-cv-link" class="cv-download-btn" hidden>
           <ion-icon name="download-outline"></ion-icon>
           <span>Download CV</span>
         </a>
@@ -52,51 +52,51 @@
       </div>
 
       <div class="sidebar-info_more">
-        <div class="separator"></div>
-        <ul class="contacts-list">
-          <li class="contact-item">
+        <div class="separator" hidden></div>
+        <ul class="contacts-list" hidden>
+          <li class="contact-item" hidden>
             <div class="icon-box"><ion-icon name="mail-outline"></ion-icon></div>
             <div class="contact-info">
               <p class="contact-title">Email</p>
-              <a href="mailto:codewithmilind@gmail.com" class="contact-link">codewithmilind@gmail.com</a>
+              <a id="profile-email" class="contact-link"></a>
             </div>
           </li>
-          <li class="contact-item">
+          <li class="contact-item" hidden>
             <div class="icon-box"><ion-icon name="phone-portrait-outline"></ion-icon></div>
             <div class="contact-info">
               <p class="contact-title">Phone</p>
-              <a href="tel:+918530871762" class="contact-link">+91 8530871762</a>
+              <a id="profile-phone" class="contact-link"></a>
             </div>
           </li>
-          <li class="contact-item">
+          <li class="contact-item" hidden>
             <div class="icon-box"><ion-icon name="location-outline"></ion-icon></div>
             <div class="contact-info">
               <p class="contact-title">Location</p>
-              <address>Pune, Maharashtra, India</address>
+              <address id="profile-location"></address>
             </div>
           </li>
         </ul>
-        <div class="separator"></div>
-        <ul class="social-list">
-          <li class="social-item">
-            <a href="https://github.com/CodeWithMilind" target="_blank" class="social-link" rel="noopener noreferrer" aria-label="GitHub">
+        <div class="separator" hidden></div>
+        <ul class="social-list" hidden>
+          <li class="social-item" hidden>
+            <a id="profile-github" target="_blank" class="social-link" rel="noopener noreferrer" aria-label="GitHub">
               <ion-icon name="logo-github"></ion-icon>
             </a>
           </li>
-          <li class="social-item">
-            <a href="https://www.linkedin.com/in/milind-chaudhari-604734237/" target="_blank" class="social-link" rel="noopener noreferrer" aria-label="LinkedIn Profile">
+          <li class="social-item" hidden>
+            <a id="profile-linkedin" target="_blank" class="social-link" rel="noopener noreferrer" aria-label="LinkedIn Profile">
               <ion-icon name="logo-linkedin"></ion-icon>
             </a>
           </li>
-          <li class="social-item">
-            <a href="https://wa.me/918530871762" target="_blank" class="social-link" rel="noopener noreferrer" aria-label="WhatsApp">
+          <li class="social-item" hidden>
+            <a id="profile-whatsapp" target="_blank" class="social-link" rel="noopener noreferrer" aria-label="WhatsApp">
               <ion-icon name="logo-whatsapp"></ion-icon>
             </a>
           </li>
         </ul>
         <button class="sidebar-admin-btn" type="button" id="admin-open-btn">
           <ion-icon name="create-outline"></ion-icon>
-          <span>Local Editor</span>
+          <span>Admin Panel</span>
         </button>
       </div>
     </aside>
@@ -203,25 +203,7 @@
             <h3 class="h3">Education</h3>
           </div>
 
-          <ol class="timeline-list">
-
-            <li class="timeline-item">
-              <h4 class="h4 timeline-item-title">Master of Computer Applications (MCA)</h4>
-              <span>2025 — 2027</span>
-              <p class="timeline-text">
-                DPGU School of Management &amp; Research (SMR), Pune · 82%
-              </p>
-            </li>
-
-            <li class="timeline-item">
-              <h4 class="h4 timeline-item-title">Bachelor of Computer Applications (BCA)</h4>
-              <span>2023 — 2025</span>
-              <p class="timeline-text">
-                MJ College, Jalgaon, Maharashtra · 75%
-              </p>
-            </li>
-
-          </ol>
+          <ol class="timeline-list" id="education-list" aria-live="polite"></ol>
 
         </section>
 
@@ -238,107 +220,15 @@
             <h3 class="h3">Experience</h3>
           </div>
 
-          <ol class="timeline-list">
-
-            <li class="timeline-item">
-              <h4 class="h4 timeline-item-title">Data Scientist Intern — Rubixe (AI Company), Bengaluru</h4>
-              <span>May 2025 — Nov 2025</span>
-
-              <p class="timeline-text">
-                Performed data preprocessing, exploratory analysis, and feature engineering; built prediction and
-                classification models; and developed data pipelines for workflows and automation.
-              </p>
-            </li>
-
-          </ol>
+          <ol class="timeline-list" id="experience-list" aria-live="polite"></ol>
 
         </section>
-
-        <section class="timeline">
-
-          <div class="title-wrapper">
-            <div class="icon-box">
-              <ion-icon name="briefcase-outline"></ion-icon>
-            </div>
-
-            <h3 class="h3">Selected Projects</h3>
-          </div>
-
-          <ol class="timeline-list">
-
-            <li class="timeline-item">
-              <h4 class="h4 timeline-item-title">AutoMail — AI Email Automation System</h4>
-              <p class="timeline-text">Python, n8n, OpenAI API. Built an automated email workflow with API-integrated data pipelines and response generation.</p>
-            </li>
-
-            <li class="timeline-item">
-              <h4 class="h4 timeline-item-title">Data4Viz — AI Data Analysis Platform</h4>
-              <p class="timeline-text">Python, Pandas. Developed automated data cleaning, correlation analysis, statistical summaries, and model-assisted interpretation.</p>
-            </li>
-
-            <li class="timeline-item">
-              <h4 class="h4 timeline-item-title">Predictive ITSM System</h4>
-              <p class="timeline-text">Python, SQL. Built classification models for service tasks with data pipelines and feature engineering workflows.</p>
-            </li>
-
-            <li class="timeline-item">
-              <h4 class="h4 timeline-item-title">Employee Performance Prediction</h4>
-              <p class="timeline-text">Python, Django. Developed a prediction model, integrated it into an application, and deployed the application.</p>
-            </li>
-
-            <li class="timeline-item">
-              <h4 class="h4 timeline-item-title">Vizion — Python Visualization Library</h4>
-              <p class="timeline-text">Python, Matplotlib. Developed a Python library for data visualization, automated EDA workflows, and chart generation.</p>
-            </li>
-
-          </ol>
-
-        </section>
-
-
 
         <section class="skill">
 
           <h3 class="h3 skills-title">Technical Skills</h3>
 
-          <ul class="skills-list content-card">
-
-            <li class="skills-item">
-              <div class="title-wrapper"><h5 class="h5">Programming</h5></div>
-              <p class="timeline-text">Python, SQL</p>
-            </li>
-
-            <li class="skills-item">
-              <div class="title-wrapper"><h5 class="h5">Libraries</h5></div>
-              <p class="timeline-text">Pandas, NumPy, Scikit-learn, Matplotlib</p>
-            </li>
-
-            <li class="skills-item">
-              <div class="title-wrapper"><h5 class="h5">Machine Learning</h5></div>
-              <p class="timeline-text">Regression, classification, model evaluation, feature engineering</p>
-            </li>
-
-            <li class="skills-item">
-              <div class="title-wrapper"><h5 class="h5">Generative AI</h5></div>
-              <p class="timeline-text">LLMs, prompt engineering, OpenAI API</p>
-            </li>
-
-            <li class="skills-item">
-              <div class="title-wrapper"><h5 class="h5">Data Engineering</h5></div>
-              <p class="timeline-text">Data pipelines</p>
-            </li>
-
-            <li class="skills-item">
-              <div class="title-wrapper"><h5 class="h5">Analysis</h5></div>
-              <p class="timeline-text">Exploratory data analysis, foundational NLP</p>
-            </li>
-
-            <li class="skills-item">
-              <div class="title-wrapper"><h5 class="h5">Tools &amp; Platforms</h5></div>
-              <p class="timeline-text">Git, Jupyter Notebook, VS Code, n8n; AWS (learning)</p>
-            </li>
-
-          </ul>
+          <ul class="skills-list content-card" id="public-skills-list" aria-live="polite"></ul>
 
         </section>
 
@@ -489,154 +379,159 @@
       -->
 
       <article class="admin" data-page="admin">
+        <header><h2 class="h2 article-title">Portfolio Admin</h2></header>
 
-        <header>
-          <h2 class="h2 article-title">Local Content Editor</h2>
-        </header>
-
-        <!-- Admin login gate -->
         <section class="contact-form" id="admin-login-section">
-
-          <h3 class="h3 form-title">Local Editing Passcode</h3>
-
+          <h3 class="h3 form-title">Admin Login</h3>
           <form class="form" id="admin-login-form">
-
             <div class="input-wrapper">
-              <input type="password" name="password" class="form-input" placeholder="Enter local editing passcode" required>
+              <input type="text" name="username" class="form-input" autocomplete="username" placeholder="Username" required>
+              <input type="password" name="password" class="form-input" autocomplete="current-password" placeholder="Password" required>
             </div>
-
-            <button class="form-btn" type="submit">
-              <ion-icon name="key-outline"></ion-icon>
-              <span>Continue</span>
-            </button>
-
-            <p class="timeline-text" id="admin-login-error" style="margin-top:10px; display:none; color:#ff6b6b;">
-              Incorrect password. Please try again.
-            </p>
-
+            <button class="form-btn" type="submit"><ion-icon name="key-outline"></ion-icon><span>Sign in</span></button>
+            <p class="admin-status" id="admin-login-status" role="status" aria-live="polite"></p>
           </form>
-
         </section>
 
-        <!-- Local content editor; this browser-side gate is not authentication. -->
-        <div id="admin-content">
-        
-        <section class="contact-form" style="background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
-          <p style="margin: 0; color: #856404; font-size: 14px;">
-            <strong>Local editor only:</strong> This browser-side passcode is not secure authentication, and changes are
-            written only to a local folder you explicitly select. It cannot update the VPS. Review and upload changed
-            JSON and image files separately to publish them.
-          </p>
-        </section>
+        <div id="admin-content" hidden>
+          <section class="contact-form admin-notice">
+            <p><strong>Database-backed admin:</strong> Profile, education, experience, skills, project, category, and certification changes are served from SQLite. Projects and certifications use the legacy JSON files as a fallback; admin edits do not rewrite those files.</p>
+            <p class="admin-status" id="admin-data-status" role="status" aria-live="polite"></p>
+            <button class="form-btn" type="button" id="admin-logout-btn"><ion-icon name="log-out-outline"></ion-icon><span>Logout</span></button>
+          </section>
 
-        <section class="contact-form">
+          <section class="contact-form">
+            <h3 class="h3 form-title">Profile</h3>
+            <form class="form" id="admin-profile-form">
+              <div class="input-wrapper">
+                <input class="form-input" name="name" placeholder="Name" required>
+                <input class="form-input" name="title" placeholder="Title">
+              </div>
+              <div class="input-wrapper">
+                <input class="form-input" type="email" name="email" placeholder="Email">
+                <input class="form-input" name="phone" placeholder="Phone">
+                <input class="form-input" name="location" placeholder="Location">
+              </div>
+              <div class="input-wrapper">
+                <input class="form-input" type="url" name="github_url" placeholder="GitHub URL">
+                <input class="form-input" type="url" name="linkedin_url" placeholder="LinkedIn URL">
+                <input class="form-input" type="url" name="whatsapp_url" placeholder="WhatsApp URL">
+              </div>
+              <div class="admin-file-field">
+                <label for="admin-profile-image">Profile image (JPEG, PNG, WEBP; max 5 MB)</label>
+                <input class="form-input" id="admin-profile-image" type="file" name="profile_image" accept="image/jpeg,image/png,image/webp">
+                <span class="admin-file-selected" data-selected-file="profile_image">No new file selected.</span>
+                <div data-selected-preview></div>
+                <div class="admin-current-file" id="admin-profile-image-current"></div>
+              </div>
+              <div class="admin-file-field">
+                <label for="admin-cv-file">CV (PDF; max 10 MB)</label>
+                <input class="form-input" id="admin-cv-file" type="file" name="cv_file" accept="application/pdf,.pdf">
+                <span class="admin-file-selected" data-selected-file="cv_file">No new file selected.</span>
+                <div data-selected-preview></div>
+                <div class="admin-current-file" id="admin-cv-current"></div>
+              </div>
+              <button class="form-btn" type="submit"><ion-icon name="save-outline"></ion-icon><span>Save Profile</span></button>
+              <p class="admin-status" data-form-status role="status" aria-live="polite"></p>
+            </form>
+          </section>
 
-          <h3 class="h3 form-title">Add New Project</h3>
+          <section class="contact-form">
+            <h3 class="h3 form-title">Education</h3>
+            <form class="form" id="admin-education-form" data-resource="education">
+              <div class="input-wrapper"><input class="form-input" name="degree" placeholder="Degree" required><input class="form-input" name="institution" placeholder="Institution" required></div>
+              <div class="input-wrapper"><input class="form-input" type="date" name="start_date" aria-label="Start date"><input class="form-input" type="date" name="end_date" aria-label="End date"><input class="form-input" type="number" name="display_order" value="0" aria-label="Display order"></div>
+              <textarea class="form-input" name="description" placeholder="Description"></textarea>
+              <button class="form-btn" type="submit"><ion-icon name="save-outline"></ion-icon><span>Save Education</span></button><button class="form-btn admin-cancel-edit" type="button" hidden>Cancel edit</button>
+              <p class="admin-status" data-form-status role="status" aria-live="polite"></p>
+            </form>
+            <ul class="skills-list content-card admin-record-list" id="admin-education-list"></ul>
+            <p class="admin-status" data-list-status="education" role="status" aria-live="polite"></p>
+          </section>
 
-          <form class="form" id="project-admin-form">
+          <section class="contact-form">
+            <h3 class="h3 form-title">Experience</h3>
+            <form class="form" id="admin-experience-form" data-resource="experience">
+              <div class="input-wrapper"><input class="form-input" name="company" placeholder="Company" required><input class="form-input" name="position" placeholder="Position" required></div>
+              <div class="input-wrapper"><input class="form-input" type="date" name="start_date" aria-label="Start date"><input class="form-input" type="date" name="end_date" aria-label="End date"><input class="form-input" type="number" name="display_order" value="0" aria-label="Display order"></div>
+              <textarea class="form-input" name="description" placeholder="Description"></textarea>
+              <button class="form-btn" type="submit"><ion-icon name="save-outline"></ion-icon><span>Save Experience</span></button><button class="form-btn admin-cancel-edit" type="button" hidden>Cancel edit</button>
+              <p class="admin-status" data-form-status role="status" aria-live="polite"></p>
+            </form>
+            <ul class="skills-list content-card admin-record-list" id="admin-experience-list"></ul>
+            <p class="admin-status" data-list-status="experience" role="status" aria-live="polite"></p>
+          </section>
 
-            <div class="input-wrapper">
-              <input type="text" name="title" class="form-input" placeholder="Project title" required>
+          <section class="contact-form">
+            <h3 class="h3 form-title">Categories</h3>
+            <form class="form" id="admin-categories-form" data-resource="categories">
+              <div class="input-wrapper"><input class="form-input" name="name" placeholder="Category name" required><input class="form-input" type="number" name="display_order" value="0" aria-label="Display order"></div>
+              <button class="form-btn" type="submit"><ion-icon name="save-outline"></ion-icon><span>Save Category</span></button><button class="form-btn admin-cancel-edit" type="button" hidden>Cancel edit</button>
+              <p class="admin-status" data-form-status role="status" aria-live="polite"></p>
+            </form>
+            <ul class="skills-list content-card admin-record-list" id="admin-categories-list"></ul>
+            <p class="admin-status" data-list-status="categories" role="status" aria-live="polite"></p>
+          </section>
 
-              <select name="category" class="form-input" required>
-                <option value="">Select category</option>
-                <option value="__other">Other (custom)</option>
-              </select>
-            </div>
+          <section class="contact-form">
+            <h3 class="h3 form-title">Projects</h3>
+            <form class="form" id="admin-projects-form" data-resource="projects">
+              <div class="input-wrapper"><input class="form-input" name="title" placeholder="Project title" required><select class="form-input" name="category_id" required><option value="">Select category</option></select></div>
+              <textarea class="form-input" name="description" placeholder="Description"></textarea>
+              <div class="input-wrapper"><input class="form-input" name="technologies" placeholder="Technologies, separated by commas"><input class="form-input" type="number" name="display_order" value="0" aria-label="Display order"></div>
+              <div class="input-wrapper"><input class="form-input" type="url" name="github_url" placeholder="GitHub URL"><input class="form-input" type="url" name="live_url" placeholder="Live URL"></div>
+              <div class="admin-file-field"><label for="admin-project-image">Project image (JPEG, PNG, WEBP; max 5 MB)</label><input class="form-input" id="admin-project-image" type="file" name="image" accept="image/jpeg,image/png,image/webp"><span class="admin-file-selected" data-selected-file="image">No new file selected.</span><div data-selected-preview></div><div class="admin-current-file" data-current-image></div></div>
+              <button class="form-btn" type="submit"><ion-icon name="save-outline"></ion-icon><span>Save Project</span></button><button class="form-btn admin-cancel-edit" type="button" hidden>Cancel edit</button>
+              <p class="admin-status" data-form-status role="status" aria-live="polite"></p>
+            </form>
+            <ul class="skills-list content-card admin-record-list" id="admin-projects-list"></ul>
+            <p class="admin-status" data-list-status="projects" role="status" aria-live="polite"></p>
+          </section>
 
-            <div class="input-wrapper" id="project-category-other-wrapper" style="display: none;">
-              <input type="text" name="categoryOther" class="form-input" placeholder="Enter custom category (e.g. NLP Projects)">
-            </div>
+          <section class="contact-form">
+            <h3 class="h3 form-title">Certifications</h3>
+            <form class="form" id="admin-certifications-form" data-resource="certifications">
+              <div class="input-wrapper"><input class="form-input" name="title" placeholder="Title" required><input class="form-input" name="issuer" placeholder="Issuer" required></div>
+              <div class="input-wrapper"><input class="form-input" type="date" name="issue_date" aria-label="Issue date"><input class="form-input" type="url" name="certificate_url" placeholder="Certificate URL"><input class="form-input" type="number" name="display_order" value="0" aria-label="Display order"></div>
+              <div class="admin-file-field"><label for="admin-certification-image">Certificate image (JPEG, PNG, WEBP; max 5 MB)</label><input class="form-input" id="admin-certification-image" type="file" name="image" accept="image/jpeg,image/png,image/webp"><span class="admin-file-selected" data-selected-file="image">No new file selected.</span><div data-selected-preview></div><div class="admin-current-file" data-current-image></div></div>
+              <button class="form-btn" type="submit"><ion-icon name="save-outline"></ion-icon><span>Save Certification</span></button><button class="form-btn admin-cancel-edit" type="button" hidden>Cancel edit</button>
+              <p class="admin-status" data-form-status role="status" aria-live="polite"></p>
+            </form>
+            <ul class="skills-list content-card admin-record-list" id="admin-certifications-list"></ul>
+            <p class="admin-status" data-list-status="certifications" role="status" aria-live="polite"></p>
+          </section>
 
-            <div class="input-wrapper">
-              <input type="file" name="image" class="form-input" accept="image/*" required>
-              <small style="display: block; margin-top: 5px; color: #888;">Image will be saved to assets/projects/</small>
+          <section class="contact-form">
+            <h3 class="h3 form-title">Awards</h3>
+            <form class="form" id="admin-awards-form" data-resource="awards">
+              <div class="input-wrapper"><input class="form-input" name="title" placeholder="Title" required><input class="form-input" name="organization" placeholder="Organization" required></div>
+              <div class="input-wrapper"><input class="form-input" type="date" name="award_date" aria-label="Award date"><input class="form-input" type="url" name="url" placeholder="Award URL"><input class="form-input" type="number" name="display_order" value="0" aria-label="Display order"></div>
+              <textarea class="form-input" name="description" placeholder="Description"></textarea>
+              <div class="admin-file-field"><label for="admin-award-image">Award image (JPEG, PNG, WEBP; max 5 MB)</label><input class="form-input" id="admin-award-image" type="file" name="image" accept="image/jpeg,image/png,image/webp"><span class="admin-file-selected" data-selected-file="image">No new file selected.</span><div data-selected-preview></div><div class="admin-current-file" data-current-image></div></div>
+              <button class="form-btn" type="submit"><ion-icon name="save-outline"></ion-icon><span>Save Award</span></button><button class="form-btn admin-cancel-edit" type="button" hidden>Cancel edit</button>
+              <p class="admin-status" data-form-status role="status" aria-live="polite"></p>
+            </form>
+            <ul class="skills-list content-card admin-record-list" id="admin-awards-list"></ul>
+            <p class="admin-status" data-list-status="awards" role="status" aria-live="polite"></p>
+          </section>
 
-              <input type="text" name="link" class="form-input" placeholder="Project link (GitHub / Live URL)" required>
-            </div>
+          <section class="contact-form">
+            <h3 class="h3 form-title">Skills</h3>
+            <form class="form" id="admin-skills-form" data-resource="skills">
+              <div class="input-wrapper"><input class="form-input" name="category" placeholder="Category" required><input class="form-input" name="name" placeholder="Skill name" required><input class="form-input" type="number" name="display_order" value="0" aria-label="Display order"></div>
+              <button class="form-btn" type="submit"><ion-icon name="save-outline"></ion-icon><span>Save Skill</span></button><button class="form-btn admin-cancel-edit" type="button" hidden>Cancel edit</button>
+              <p class="admin-status" data-form-status role="status" aria-live="polite"></p>
+            </form>
+            <ul class="skills-list content-card admin-record-list" id="admin-skills-list"></ul>
+            <p class="admin-status" data-list-status="skills" role="status" aria-live="polite"></p>
+          </section>
 
-            <button class="form-btn" type="submit">
-              <ion-icon name="add-circle-outline"></ion-icon>
-              <span>Add Project</span>
-            </button>
-
-          </form>
-
-        </section>
-
-        <section class="skill">
-
-          <h3 class="h3 skills-title">Your Projects (Added from Admin)</h3>
-
-          <ul class="skills-list content-card" id="project-admin-list">
-            <!-- Admin-managed projects will be listed here -->
-          </ul>
-
-        </section>
-
-        <section class="skill">
-
-          <h3 class="h3 skills-title">Manage Custom Categories</h3>
-
-          <ul class="skills-list content-card" id="project-category-list">
-            <!-- Custom categories derived from admin projects will be listed here -->
-          </ul>
-
-        </section>
-
-        <section class="contact-form">
-
-          <h3 class="h3 form-title">Add New Certification</h3>
-
-          <form class="form" id="cert-admin-form">
-
-            <div class="input-wrapper">
-              <input type="text" name="title" class="form-input" placeholder="Certification title" required>
-
-              <input type="text" name="issuer" class="form-input" placeholder="Issuer / Platform" required>
-            </div>
-
-            <div class="input-wrapper">
-              <input type="text" name="date" class="form-input" placeholder="Date (e.g. Jun 2025)" required>
-
-              <input type="text" name="link" class="form-input" placeholder="Certificate link (URL)" required>
-            </div>
-
-            <div class="input-wrapper">
-              <input type="file" name="image" class="form-input" accept="image/*">
-              <small style="display: block; margin-top: 5px; color: #888;">Image will be saved to assets/certificates/ directory</small>
-            </div>
-
-            <button class="form-btn" type="submit">
-              <ion-icon name="ribbon-outline"></ion-icon>
-              <span>Add Certification</span>
-            </button>
-
-          </form>
-
-        </section>
-
-        <section class="skill">
-
-          <h3 class="h3 skills-title">Your Certifications (Added from Admin)</h3>
-
-          <ul class="skills-list content-card" id="cert-admin-list">
-            <!-- Admin-managed certifications will be listed here -->
-          </ul>
-
-        </section>
-
-        <section class="contact-form" style="margin-top:20px;">
-
-          <button class="form-btn" type="button" id="admin-logout-btn">
-            <ion-icon name="log-out-outline"></ion-icon>
-            <span>Logout</span>
-          </button>
-
-        </section>
-
+          <section class="contact-form">
+            <h3 class="h3 form-title">Site Settings</h3>
+            <div id="admin-site-settings-list"></div>
+            <p class="admin-status" data-list-status="site-settings" role="status" aria-live="polite"></p>
+          </section>
         </div>
-
       </article>
 
     </div>
@@ -652,6 +547,7 @@
     - custom js link
   -->
   <script src="./assets/js/script.js"></script>
+  <script src="./assets/js/admin.js"></script>
 
   <!--
     - ionicon link

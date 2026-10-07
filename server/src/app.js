@@ -7,6 +7,7 @@ const healthRoutes = require('./routes/health');
 const publicRoutes = require('./routes/public');
 const adminRoutes = require('./routes/admin');
 const { router: uploadRoutes } = require('./routes/uploads');
+const { requireCsrf } = require('./middleware/csrf');
 const fs = require('fs');
 const path = require('path');
 
@@ -73,6 +74,7 @@ app.use('/uploads', (req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api', publicRoutes);
+app.use('/api/admin', requireCsrf);
 app.use('/api/admin/uploads', uploadRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api', healthRoutes);
