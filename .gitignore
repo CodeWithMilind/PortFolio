@@ -16,7 +16,21 @@ npm-debug.log*
 
 # Dependencies (if you add any build tools later)
 node_modules/
+server/node_modules/
+server/data/*.db
+server/data/*.db-*
 package-lock.json
+server/package-lock.json
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Uploads are intentionally local and should not be committed as media content
+uploads/*
+!uploads/**/
+!uploads/**/.gitkeep
 
 # Note: We DO want to track images in assets/projects/ and assets/certificates/ directories
 # So we're NOT ignoring *.jpg, *.png, *.svg, etc.

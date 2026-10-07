@@ -1125,6 +1125,17 @@ main {
   margin-bottom: 15px;
 }
 
+.project-img-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-gradient-onyx);
+}
+
+.project-img-placeholder .project-item-icon-box {
+  opacity: 1;
+}
+
 .project-img::before {
   content: "";
   position: absolute;
@@ -1195,6 +1206,24 @@ main {
   color: var(--light-gray-70);
   font-size: var(--fs-6);
   font-weight: var(--fw-300);
+}
+
+.project-description,
+.project-technologies {
+  margin: 8px 10px 0;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.project-description {
+  color: var(--light-gray);
+  font-size: var(--fs-7);
+  font-weight: var(--fw-300);
+}
+
+.project-technologies {
+  color: var(--vegas-gold);
+  font-size: var(--fs-8);
 }
 
 /* Certifications use the same grid layout as projects */
@@ -1451,6 +1480,119 @@ textarea.form-input::-webkit-resizer {
   margin-top: 24px;
 }
 
+.admin [hidden] {
+  display: none !important;
+}
+
+.admin-notice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border: 1px solid var(--orange-yellow-crayola);
+}
+
+.admin-notice p,
+.admin-muted {
+  color: var(--light-gray);
+  font-size: var(--fs-6);
+  line-height: 1.6;
+}
+
+.admin-status {
+  min-height: 1.4em;
+  margin-top: 8px;
+  color: var(--light-gray);
+  font-size: var(--fs-6);
+}
+
+.admin-status.is-success {
+  color: #8bd49c;
+}
+
+.admin-status.is-error {
+  color: #ff8f8f;
+}
+
+.admin-status.is-saving {
+  color: var(--orange-yellow-crayola);
+}
+
+.admin-file-field {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.admin-file-field label,
+.admin-setting-label {
+  color: var(--white-2);
+  font-size: var(--fs-6);
+}
+
+.admin-file-selected {
+  color: var(--light-gray);
+  font-size: var(--fs-7);
+  overflow-wrap: anywhere;
+}
+
+.admin-image-preview {
+  display: block;
+  width: auto;
+  max-width: min(100%, 240px);
+  max-height: 180px;
+  margin-top: 8px;
+  border-radius: 8px;
+  object-fit: contain;
+}
+
+.admin-record {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px;
+  border-bottom: 1px solid var(--jet);
+}
+
+.admin-record-details {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.admin-record-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.admin-cancel-edit {
+  margin-left: 8px;
+}
+
+.admin-setting-form {
+  margin: 12px 0;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--jet);
+}
+
+.admin-setting-label {
+  display: grid;
+  gap: 8px;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 580px) {
+  .admin-notice,
+  .admin-record {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .admin-record-actions {
+    width: 100%;
+  }
+}
 
 
 

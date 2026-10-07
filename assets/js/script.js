@@ -10,6 +10,58 @@ const elementToggleFunc = function (elem) { elem.classList.toggle("active"); }
 // sidebar variables
 const sidebar = document.querySelector("[data-sidebar]");
 const sidebarBtn = document.querySelector("[data-sidebar-btn]");
+const profileImageElement = document.getElementById("profile-image");
+const profileNameElement = document.getElementById("profile-name");
+const profileTitleElement = document.getElementById("profile-title");
+const profileCvLink = document.getElementById("profile-cv-link");
+const profileInfoContent = document.querySelector(".sidebar-info .info-content");
+const profileAvatarFigure = profileImageElement?.closest("figure");
+const profileContactsList = document.querySelector(".sidebar-info_more .contacts-list");
+const profileSocialList = document.querySelector(".sidebar-info_more .social-list");
+const profileDetailsSeparators = document.querySelectorAll(".sidebar-info_more > .separator");
+
+const setProfileVisibility = (element, visible) => {
+  if (!element) return;
+  element.hidden = !visible;
+  element.style.display = visible ? "" : "none";
+};
+
+const profileContactElements = {
+  email: {
+    link: document.getElementById("profile-email"),
+    item: document.getElementById("profile-email")?.closest(".contact-item"),
+  },
+  phone: {
+    link: document.getElementById("profile-phone"),
+    item: document.getElementById("profile-phone")?.closest(".contact-item"),
+  },
+  location: {
+    text: document.getElementById("profile-location"),
+    item: document.getElementById("profile-location")?.closest(".contact-item"),
+  },
+};
+
+const profileSocialElements = {
+  github: {
+    link: document.getElementById("profile-github"),
+    item: document.getElementById("profile-github")?.closest(".social-item"),
+  },
+  linkedin: {
+    link: document.getElementById("profile-linkedin"),
+    item: document.getElementById("profile-linkedin")?.closest(".social-item"),
+  },
+  whatsapp: {
+    link: document.getElementById("profile-whatsapp"),
+    item: document.getElementById("profile-whatsapp")?.closest(".social-item"),
+  },
+};
+
+if (profileImageElement) {
+  profileImageElement.addEventListener("error", () => {
+    setProfileVisibility(profileImageElement, false);
+    setProfileVisibility(profileAvatarFigure, false);
+  });
+}
 
 // sidebar toggle functionality for mobile
 sidebarBtn.addEventListener("click", function () { elementToggleFunc(sidebar); });
@@ -57,139 +109,253 @@ overlay.addEventListener("click", testimonialsModalFunc);
 
 // ===== PORTFOLIO DATA & RENDERING =====
 
-const STORAGE_KEYS = {
-  projects: "mc_portfolio_projects",
-  certs: "mc_portfolio_certs"
-};
-
-// Global data storage (loaded from JSON files)
+// Projects and certifications prefer the public API and fall back to the legacy JSON files.
 let globalProjectsData = [];
 let globalCertsData = [];
-let dataLoaded = false;
+let globalProjectCategories = [];
+let portfolioDataPromise = null;
 
-// Load data from JSON files (for all users)
-const loadDataFromJSON = async () => {
-  if (dataLoaded) return; // Only load once
-  
-  try {
-    // Load projects
-    const projectsResponse = await fetch('./assets/data/projects.json');
-    if (projectsResponse.ok) {
-      globalProjectsData = await projectsResponse.json();
-    } else {
-      console.warn("Failed to load projects.json, using empty array");
-      globalProjectsData = [];
-    }
-  } catch (e) {
-    console.error("Error loading projects.json:", e);
-    globalProjectsData = [];
-  }
-
-  try {
-    // Load certificates
-    const certsResponse = await fetch('./assets/data/certificates.json');
-    if (certsResponse.ok) {
-      globalCertsData = await certsResponse.json();
-    } else {
-      console.warn("Failed to load certificates.json, using empty array");
-      globalCertsData = [];
-    }
-  } catch (e) {
-    console.error("Error loading certificates.json:", e);
-    globalCertsData = [];
-  }
-  
-  dataLoaded = true;
+const requestJsonArray = async (path) => {
+  const response = await fetch(path, { headers: { Accept: "application/json" } });
+  if (!response.ok) throw new Error(`Request failed with HTTP ${response.status}`);
+  const data = await response.json();
+  if (!Array.isArray(data)) throw new Error("Expected an array response.");
+  return data;
 };
 
-// Save data to JSON file (admin only, using File System Access API)
-const saveDataToJSONFile = async (data, filename) => {
-  if (!isAdminAuthed) {
-    console.error("Only admin can save data to JSON files");
-    return false;
+const safeExternalUrl = (value) => {
+  if (typeof value !== "string" || !value.trim()) return "";
+  try {
+    const url = new URL(value.trim());
+    return ["http:", "https:"].includes(url.protocol) ? url.href : "";
+  } catch {
+    return "";
+  }
+};
+
+const resolvePortfolioImage = (value) => {
+  if (typeof value !== "string" || !value.trim()) return "";
+  const normalized = value.trim().replace(/\\/g, "/");
+  const upload = /^\/?uploads\/(projects|certificates|awards|profile)\/([0-9a-f-]{36})\.(jpg|jpeg|png|webp)$/i.exec(normalized);
+  if (upload) return `/uploads/${upload[1]}/${upload[2]}.${upload[3]}`;
+
+  const assetPath = normalized.replace(/^\.\//, "");
+  if (/^assets\/[a-zA-Z0-9_./-]+$/.test(assetPath) && !assetPath.split("/").includes("..")) {
+    return `./${assetPath}`;
+  }
+  return "";
+};
+
+const resolveProfileCv = (value) => {
+  if (typeof value !== "string" || !value.trim()) return "";
+  const normalized = value.trim().replace(/\\/g, "/");
+  const cv = /^\/?uploads\/cv\/([0-9a-f-]{36})\.pdf$/i.exec(normalized);
+  return cv ? `/uploads/cv/${cv[1]}.pdf` : "";
+};
+
+const applyApiProfile = (profile) => {
+  const name = typeof profile.name === "string" ? profile.name.trim() : "";
+  if (profileNameElement) {
+    profileNameElement.textContent = name;
+    if (name) profileNameElement.title = name;
+    else profileNameElement.removeAttribute("title");
+    setProfileVisibility(profileNameElement, Boolean(name));
   }
 
+  const title = typeof profile.title === "string" ? profile.title.trim() : "";
+  if (profileTitleElement) {
+    profileTitleElement.textContent = title;
+    setProfileVisibility(profileTitleElement, Boolean(title));
+  }
+  setProfileVisibility(profileInfoContent, Boolean(name || title));
+  document.title = name ? (title ? `${name} | ${title}` : name) : "Portfolio";
+
+  const email = typeof profile.email === "string" ? profile.email.trim() : "";
+  const emailElements = profileContactElements.email;
+  if (emailElements.link) {
+    emailElements.link.textContent = email;
+    if (email && !/[\r\n]/.test(email)) emailElements.link.href = `mailto:${email}`;
+    else emailElements.link.removeAttribute("href");
+    setProfileVisibility(emailElements.item, Boolean(email && !/[\r\n]/.test(email)));
+  }
+
+  const phone = typeof profile.phone === "string" ? profile.phone.trim() : "";
+  const phoneHref = phone.replace(/[\s().-]/g, "");
+  const validPhone = phone && /^\+?\d{5,15}$/.test(phoneHref);
+  const phoneElements = profileContactElements.phone;
+  if (phoneElements.link) {
+    phoneElements.link.textContent = validPhone ? phone : "";
+    if (validPhone) phoneElements.link.href = `tel:${phoneHref}`;
+    else phoneElements.link.removeAttribute("href");
+    setProfileVisibility(phoneElements.item, Boolean(validPhone));
+  }
+
+  const location = typeof profile.location === "string" ? profile.location.trim() : "";
+  const locationElements = profileContactElements.location;
+  if (locationElements.text) {
+    locationElements.text.textContent = location;
+    setProfileVisibility(locationElements.item, Boolean(location));
+  }
+  const hasContact = Boolean(email && !/[\r\n]/.test(email)) || Boolean(validPhone) || Boolean(location);
+  setProfileVisibility(profileContactsList, hasContact);
+
+  const socialValues = {
+    github: profile.github_url,
+    linkedin: profile.linkedin_url,
+    whatsapp: profile.whatsapp_url,
+  };
+  Object.entries(profileSocialElements).forEach(([key, elements]) => {
+    const url = safeExternalUrl(socialValues[key]);
+    if (elements.link) {
+      if (url) elements.link.href = url;
+      else elements.link.removeAttribute("href");
+      setProfileVisibility(elements.item, Boolean(url));
+    }
+  });
+  const hasSocial = Object.values(profileSocialElements).some(({ item }) => item && !item.hidden);
+  setProfileVisibility(profileSocialList, hasSocial);
+  if (profileDetailsSeparators.length > 0) setProfileVisibility(profileDetailsSeparators[0], hasContact || hasSocial);
+  if (profileDetailsSeparators.length > 1) setProfileVisibility(profileDetailsSeparators[1], hasContact && hasSocial);
+
+  const image = resolvePortfolioImage(profile.profile_image_path);
+  if (profileImageElement) {
+    profileImageElement.alt = name;
+    if (image) {
+      profileImageElement.src = image;
+      setProfileVisibility(profileImageElement, true);
+      setProfileVisibility(profileAvatarFigure, true);
+    } else {
+      profileImageElement.removeAttribute("src");
+      setProfileVisibility(profileImageElement, false);
+      setProfileVisibility(profileAvatarFigure, false);
+    }
+  }
+
+  const cv = resolveProfileCv(profile.cv_file_path);
+  if (profileCvLink) {
+    if (cv) {
+      profileCvLink.href = cv;
+      profileCvLink.download = "CV.pdf";
+    } else {
+      profileCvLink.removeAttribute("href");
+      profileCvLink.removeAttribute("download");
+    }
+    setProfileVisibility(profileCvLink, Boolean(cv));
+  }
+};
+
+const loadApiProfile = async () => {
   try {
-    // Check if File System Access API is available
-    if (!('showDirectoryPicker' in window)) {
-      console.warn("File System Access API not available. Data saved to localStorage only.");
-      return false;
-    }
-
-    // If we don't have directory handle yet, request it
-    if (!projectDirectoryHandle) {
-      const hasAccess = await requestProjectDirectory();
-      if (!hasAccess) {
-        console.warn("Directory access denied. Data saved to localStorage only.");
-        return false;
-      }
-    }
-
-    // Navigate to assets/data directory
-    const assetsHandle = await projectDirectoryHandle.getDirectoryHandle('assets', { create: true });
-    const dataHandle = await assetsHandle.getDirectoryHandle('data', { create: true });
-    
-    // Create/update JSON file
-    const fileHandle = await dataHandle.getFileHandle(filename, { create: true });
-    const writable = await fileHandle.createWritable();
-    await writable.write(JSON.stringify(data, null, 2));
-    await writable.close();
-    
-    console.log(`✓ Data saved to assets/data/${filename}`);
-    return true;
+    const response = await fetch("/api/profile", { headers: { Accept: "application/json" } });
+    if (!response.ok) throw new Error(`Request failed with HTTP ${response.status}`);
+    const profile = await response.json();
+    if (profile && typeof profile === "object" && !Array.isArray(profile)) applyApiProfile(profile);
   } catch (error) {
-    console.error(`Error saving ${filename}:`, error);
-    return false;
+    console.warn("Profile API request failed; profile details remain hidden.", error);
   }
 };
 
-// Load projects (from JSON files - visible to all users)
+const normalizeApiProject = (project) => {
+  const categoryName = typeof project.category_name === "string" ? project.category_name.trim() : "";
+  const githubUrl = safeExternalUrl(project.github_url);
+  const liveUrl = safeExternalUrl(project.live_url);
+  return {
+    id: String(project.id ?? ""),
+    title: typeof project.title === "string" ? project.title : "",
+    category: categoryName.toLowerCase(),
+    displayCategory: categoryName || "Other",
+    categoryId: project.category_id,
+    description: typeof project.description === "string" ? project.description : "",
+    technologies: Array.isArray(project.technologies) ? project.technologies.filter((item) => typeof item === "string") : [],
+    image: resolvePortfolioImage(project.image_path),
+    link: liveUrl || githubUrl,
+    githubUrl,
+    liveUrl,
+  };
+};
+
+const normalizeLegacyProject = (project) => ({
+  ...project,
+  category: typeof project.category === "string" ? project.category : "",
+  displayCategory: typeof project.displayCategory === "string" ? project.displayCategory : "",
+  description: typeof project.description === "string" ? project.description : "",
+  technologies: Array.isArray(project.technologies) ? project.technologies.filter((item) => typeof item === "string") : [],
+  image: resolvePortfolioImage(project.image),
+  link: safeExternalUrl(project.link),
+});
+
+const normalizeApiCertification = (certificate) => ({
+  id: String(certificate.id ?? ""),
+  title: typeof certificate.title === "string" ? certificate.title : "",
+  issuer: typeof certificate.issuer === "string" ? certificate.issuer : "",
+  date: typeof certificate.issue_date === "string" ? certificate.issue_date : "",
+  link: safeExternalUrl(certificate.certificate_url),
+  image: resolvePortfolioImage(certificate.image_path),
+});
+
+const normalizeLegacyCertification = (certificate) => ({
+  ...certificate,
+  title: typeof certificate.title === "string" ? certificate.title : "",
+  issuer: typeof certificate.issuer === "string" ? certificate.issuer : "",
+  date: typeof certificate.date === "string" ? certificate.date : "",
+  link: safeExternalUrl(certificate.link),
+  image: resolvePortfolioImage(certificate.image),
+});
+
+const loadCollectionWithFallback = async (apiPath, jsonPath, normalizeApiRecord, normalizeJsonRecord, label) => {
+  try {
+    const records = await requestJsonArray(apiPath);
+    if (records.length) return { records: records.map(normalizeApiRecord), source: "api" };
+    console.warn(`${label} API returned no records; trying the legacy JSON fallback.`);
+  } catch (error) {
+    console.warn(`${label} API request failed; trying the legacy JSON fallback.`, error);
+  }
+
+  try {
+    const records = await requestJsonArray(jsonPath);
+    return { records: records.map(normalizeJsonRecord), source: "json" };
+  } catch (error) {
+    console.warn(`${label} API and JSON fallback are unavailable.`, error);
+    return { records: [], source: "empty" };
+  }
+};
+
+const loadApiCategories = async () => {
+  try {
+    const categories = await requestJsonArray("/api/categories");
+    return categories.filter((category) => typeof category.name === "string" && category.name.trim());
+  } catch (error) {
+    console.warn("Project categories API request failed; deriving filters from the loaded projects.", error);
+    return [];
+  }
+};
+
+const loadPortfolioData = () => {
+  if (!portfolioDataPromise) {
+    portfolioDataPromise = (async () => {
+      const [projects, certifications, categories] = await Promise.all([
+        loadCollectionWithFallback("/api/projects", "./assets/data/projects.json", normalizeApiProject, normalizeLegacyProject, "Projects"),
+        loadCollectionWithFallback("/api/certifications", "./assets/data/certificates.json", normalizeApiCertification, normalizeLegacyCertification, "Certifications"),
+        loadApiCategories(),
+      ]);
+      globalProjectsData = projects.records;
+      globalCertsData = certifications.records;
+      globalProjectCategories = projects.source === "api" ? categories : [];
+    })();
+  }
+  return portfolioDataPromise;
+};
+
+// Loaded data is cached for the lifetime of the page; filter clicks use the in-memory collection.
 const loadUserProjects = () => {
   return globalProjectsData || [];
 };
 
-// Save projects (admin only - saves to both localStorage and JSON file)
-const saveUserProjects = async (projects) => {
-  // Update global data
-  globalProjectsData = projects;
-  
-  // Save to localStorage for immediate preview
-  try {
-    localStorage.setItem(STORAGE_KEYS.projects, JSON.stringify(projects));
-  } catch (e) {
-    console.error("Failed to save projects to localStorage", e);
-  }
-  
-  // Save to JSON file (admin only)
-  if (isAdminAuthed) {
-    await saveDataToJSONFile(projects, 'projects.json');
-  }
-};
-
-// Load certificates (from JSON files - visible to all users)
 const loadCerts = () => {
   return globalCertsData || [];
 };
 
-// Save certificates (admin only - saves to both localStorage and JSON file)
-const saveCerts = async (certs) => {
-  // Update global data
-  globalCertsData = certs;
-  
-  // Save to localStorage for immediate preview
-  try {
-    localStorage.setItem(STORAGE_KEYS.certs, JSON.stringify(certs));
-  } catch (e) {
-    console.error("Failed to save certificates to localStorage", e);
-  }
-  
-  // Save to JSON file (admin only)
-  if (isAdminAuthed) {
-    await saveDataToJSONFile(certs, 'certificates.json');
-  }
-};
-
-// default projects (empty so everything comes from Admin)
+// Keep built-in defaults empty; public records come from the API or JSON fallback.
 const defaultProjects = [];
 
 const getAllProjects = () => [...defaultProjects, ...loadUserProjects()];
@@ -197,6 +363,13 @@ const getAllProjects = () => [...defaultProjects, ...loadUserProjects()];
 const projectListElem = document.getElementById("project-list");
 
 const getProjectCategoryMeta = (projects) => {
+  const usedCategoryIds = new Set(projects.map((project) => String(project.categoryId ?? "")));
+  const usedCategoryNames = new Set(projects.map((project) => String(project.category || "").trim().toLowerCase()));
+  const apiCategories = globalProjectCategories
+    .filter((category) => usedCategoryIds.has(String(category.id)) || usedCategoryNames.has(category.name.trim().toLowerCase()))
+    .map((category) => ({ value: category.name.trim().toLowerCase(), label: category.name.trim() }));
+  if (apiCategories.length) return apiCategories;
+
   const categoryMap = new Map();
   projects.forEach((project) => {
     const label = (project.displayCategory || project.category || "").trim();
@@ -251,12 +424,18 @@ const syncProjectCategoriesUI = (categories = []) => {
   categories.forEach(({ value, label }) => {
     const filterItem = document.createElement("li");
     filterItem.className = "filter-item";
-    filterItem.innerHTML = `<button data-filter-btn>${label}</button>`;
+    const filterButton = document.createElement("button");
+    filterButton.dataset.filterBtn = "";
+    filterButton.textContent = label;
+    filterItem.appendChild(filterButton);
     filterFragment.appendChild(filterItem);
 
     const selectItem = document.createElement("li");
     selectItem.className = "select-item";
-    selectItem.innerHTML = `<button data-select-item>${label}</button>`;
+    const selectButton = document.createElement("button");
+    selectButton.dataset.selectItem = "";
+    selectButton.textContent = label;
+    selectItem.appendChild(selectButton);
     selectFragment.appendChild(selectItem);
   });
 
@@ -270,6 +449,18 @@ const renderProjects = () => {
   projectListElem.innerHTML = "";
   const projects = getAllProjects();
 
+  if (!projects.length) {
+    const item = document.createElement("li");
+    item.className = "project-item active";
+    const message = document.createElement("p");
+    message.className = "timeline-text";
+    message.textContent = "Projects are temporarily unavailable.";
+    item.appendChild(message);
+    projectListElem.appendChild(item);
+    syncProjectCategoriesUI([]);
+    return;
+  }
+
   projects.forEach((p) => {
     const li = document.createElement("li");
     li.className = "project-item active";
@@ -278,18 +469,30 @@ const renderProjects = () => {
     li.dataset.category = categoryKey;
     const displayCategory = p.displayCategory || p.category || "Other";
 
-    li.innerHTML = `
-      <a href="${p.link || "#"}" target="_blank">
-        <figure class="project-img">
+    const title = escapePortfolioText(p.title);
+    const category = escapePortfolioText(displayCategory);
+    const description = escapePortfolioText(p.description);
+    const technologies = escapePortfolioText((p.technologies || []).join(", "));
+    const image = resolvePortfolioImage(p.image);
+    const imageMarkup = image ? `<img src="${escapePortfolioText(image)}" alt="${title}" loading="lazy">` : "";
+    const imageFigureClass = image ? "project-img" : "project-img project-img-placeholder";
+    const projectContent = `
+        <figure class="${imageFigureClass}">
           <div class="project-item-icon-box">
             <ion-icon name="eye-outline"></ion-icon>
           </div>
-          <img src="${p.image}" alt="${p.title}" loading="lazy">
+          ${imageMarkup}
         </figure>
-        <h3 class="project-title">${p.title}</h3>
-        <p class="project-category">${displayCategory}</p>
-      </a>
+        <h3 class="project-title">${title}</h3>
+        <p class="project-category">${category}</p>
+        ${description ? `<p class="project-description">${description}</p>` : ""}
+        ${technologies ? `<p class="project-technologies">${technologies}</p>` : ""}
     `;
+
+    const projectLink = safeExternalUrl(p.link);
+    li.innerHTML = projectLink
+      ? `<a href="${escapePortfolioText(projectLink)}" target="_blank" rel="noopener noreferrer">${projectContent}</a>`
+      : `<div>${projectContent}</div>`;
 
     projectListElem.appendChild(li);
   });
@@ -298,11 +501,240 @@ const renderProjects = () => {
   syncProjectCategoriesUI(categories);
 };
 
-// Load data and render on page load
-loadDataFromJSON().then(() => {
+// Preserve the existing certification card markup for API and fallback records.
+const certDisplayList = document.getElementById("certifications-list");
+const renderCertifications = () => {
+  if (!certDisplayList) return;
+  const certs = loadCerts();
+  certDisplayList.innerHTML = "";
+  if (!certs.length) {
+    const li = document.createElement("li");
+    li.className = "project-item active";
+    const message = document.createElement("p");
+    message.className = "timeline-text";
+    message.textContent = "Certifications are temporarily unavailable.";
+    li.appendChild(message);
+    certDisplayList.appendChild(li);
+    return;
+  }
+  certs.forEach((certificate) => {
+    const li = document.createElement("li");
+    li.className = "project-item active";
+    const title = escapePortfolioText(certificate.title || "Certification");
+    const issuer = escapePortfolioText(certificate.issuer);
+    const date = escapePortfolioText(certificate.date);
+    const link = safeExternalUrl(certificate.link) || "#";
+    const image = resolvePortfolioImage(certificate.image);
+    const imageMarkup = image ? `<img src="${escapePortfolioText(image)}" alt="${title}" loading="lazy">` : "";
+    li.innerHTML = `
+      <a href="${escapePortfolioText(link)}" target="_blank" rel="noopener noreferrer">
+        <figure class="project-img${image ? "" : " project-img-placeholder"}">
+          <div class="project-item-icon-box"><ion-icon name="ribbon-outline"></ion-icon></div>
+          ${imageMarkup}
+        </figure>
+        <h3 class="project-title">${title}</h3>
+        <p class="project-category">${issuer} • ${date}</p>
+      </a>`;
+    certDisplayList.appendChild(li);
+  });
+};
+
+const escapePortfolioText = (value) => String(value ?? "").replace(/[&<>"']/g, (character) => ({
+  "&": "&amp;",
+  "<": "&lt;",
+  ">": "&gt;",
+  '"': "&quot;",
+  "'": "&#39;",
+}[character]));
+
+const educationListElement = document.getElementById("education-list");
+const experienceListElement = document.getElementById("experience-list");
+const formatTimelineYear = (value) => {
+  if (typeof value !== "string" || !value.trim()) return "";
+  const date = value.trim();
+  const isoDate = /^(\d{4})-\d{2}-\d{2}$/.exec(date);
+  return isoDate ? isoDate[1] : date;
+};
+
+const renderTimelineMessage = (list, message) => {
+  if (!list) return;
+  list.replaceChildren();
+  const item = document.createElement("li");
+  item.className = "timeline-item";
+  const text = document.createElement("p");
+  text.className = "timeline-text";
+  text.textContent = message;
+  item.appendChild(text);
+  list.appendChild(item);
+};
+
+const renderEducationMessage = (message) => renderTimelineMessage(educationListElement, message);
+
+const publicSkillsListElement = document.getElementById("public-skills-list");
+const renderPublicSkillsMessage = (message) => {
+  if (!publicSkillsListElement) return;
+  publicSkillsListElement.replaceChildren();
+  const item = document.createElement("li");
+  item.className = "skills-item";
+  const text = document.createElement("p");
+  text.className = "timeline-text";
+  text.textContent = message;
+  item.appendChild(text);
+  publicSkillsListElement.appendChild(item);
+};
+
+const renderPublicSkills = (records) => {
+  if (!publicSkillsListElement) return;
+  publicSkillsListElement.replaceChildren();
+
+  const skillsByCategory = new Map();
+  records.forEach((record) => {
+    if (!record || typeof record !== "object" || Array.isArray(record)) return;
+    const category = typeof record.category === "string" ? record.category.trim() : "";
+    const name = typeof record.name === "string" ? record.name.trim() : "";
+    if (!category || !name) return;
+    if (!skillsByCategory.has(category)) skillsByCategory.set(category, []);
+    skillsByCategory.get(category).push(name);
+  });
+
+  if (!skillsByCategory.size) {
+    renderPublicSkillsMessage("No skills are available.");
+    return;
+  }
+
+  skillsByCategory.forEach((names, category) => {
+    const item = document.createElement("li");
+    item.className = "skills-item";
+    const titleWrapper = document.createElement("div");
+    titleWrapper.className = "title-wrapper";
+    const title = document.createElement("h5");
+    title.className = "h5";
+    title.textContent = category;
+    titleWrapper.appendChild(title);
+    const list = document.createElement("p");
+    list.className = "timeline-text";
+    list.textContent = names.join(", ");
+    item.append(titleWrapper, list);
+    publicSkillsListElement.appendChild(item);
+  });
+};
+
+const renderEducation = (records) => {
+  if (!educationListElement) return;
+  educationListElement.replaceChildren();
+
+  const educationRecords = records.filter((record) => record && typeof record === "object" && !Array.isArray(record));
+  if (!educationRecords.length) {
+    renderEducationMessage("No education records are available.");
+    return;
+  }
+
+  educationRecords.forEach((record) => {
+    const item = document.createElement("li");
+    item.className = "timeline-item";
+
+    const degree = typeof record.degree === "string" ? record.degree.trim() : "";
+    if (degree) {
+      const title = document.createElement("h4");
+      title.className = "h4 timeline-item-title";
+      title.textContent = degree;
+      item.appendChild(title);
+    }
+
+    const startYear = formatTimelineYear(record.start_date);
+    const endYear = formatTimelineYear(record.end_date);
+    const period = startYear && endYear ? `${startYear} — ${endYear}` : (startYear || endYear);
+    if (period) {
+      const date = document.createElement("span");
+      date.textContent = period;
+      item.appendChild(date);
+    }
+
+    const institution = typeof record.institution === "string" ? record.institution.trim() : "";
+    const description = typeof record.description === "string" ? record.description.trim() : "";
+    const details = [institution, description].filter(Boolean).join(" · ");
+    if (details) {
+      const text = document.createElement("p");
+      text.className = "timeline-text";
+      text.textContent = details;
+      item.appendChild(text);
+    }
+
+    educationListElement.appendChild(item);
+  });
+};
+
+const renderExperience = (records) => {
+  if (!experienceListElement) return;
+  experienceListElement.replaceChildren();
+
+  const experienceRecords = records.filter((record) => record && typeof record === "object" && !Array.isArray(record));
+  if (!experienceRecords.length) {
+    renderTimelineMessage(experienceListElement, "No experience records are available.");
+    return;
+  }
+
+  experienceRecords.forEach((record) => {
+    const item = document.createElement("li");
+    item.className = "timeline-item";
+
+    const position = typeof record.position === "string" ? record.position.trim() : "";
+    const company = typeof record.company === "string" ? record.company.trim() : "";
+    const heading = [position, company].filter(Boolean).join(" — ");
+    if (heading) {
+      const title = document.createElement("h4");
+      title.className = "h4 timeline-item-title";
+      title.textContent = heading;
+      item.appendChild(title);
+    }
+
+    const startYear = formatTimelineYear(record.start_date);
+    const endYear = formatTimelineYear(record.end_date);
+    const period = startYear && endYear ? `${startYear} — ${endYear}` : (startYear || endYear);
+    if (period) {
+      const date = document.createElement("span");
+      date.textContent = period;
+      item.appendChild(date);
+    }
+
+    const description = typeof record.description === "string" ? record.description.trim() : "";
+    if (description) {
+      const text = document.createElement("p");
+      text.className = "timeline-text";
+      text.textContent = description;
+      item.appendChild(text);
+    }
+
+    experienceListElement.appendChild(item);
+  });
+};
+
+requestJsonArray("/api/education").then(renderEducation).catch((error) => {
+  console.warn("Education API request failed.", error);
+  renderEducationMessage("Education is temporarily unavailable.");
+});
+
+requestJsonArray("/api/skills").then(renderPublicSkills).catch((error) => {
+  console.warn("Skills API request failed.", error);
+  renderPublicSkillsMessage("Skills are temporarily unavailable.");
+});
+
+requestJsonArray("/api/experience").then(renderExperience).catch((error) => {
+  console.warn("Experience API request failed.", error);
+  renderTimelineMessage(experienceListElement, "Experience is temporarily unavailable.");
+});
+
+// Load the database-backed sidebar profile and portfolio API data on page load.
+loadApiProfile();
+loadPortfolioData().then(() => {
   renderProjects();
   renderCertifications();
-  renderAdminProjects();   // 🔥 ADD THIS
+}).catch((error) => {
+  console.error("Portfolio data could not be loaded.", error);
+  globalProjectsData = [];
+  globalCertsData = [];
+  renderProjects();
+  renderCertifications();
 });
 
 // custom select & filter variables
@@ -440,778 +872,3 @@ if (form) {
     // The form will submit normally to FormSubmit
   });
 }
-
-
-
-// page navigation variables
-const navigationLinks = document.querySelectorAll("[data-nav-link]");
-const pages = document.querySelectorAll("[data-page]");
-// Encrypted admin password: "Fri***" obfuscated with a simple XOR key
-const ADMIN_PASSWORD_ENC = [87, 67, 88, 85, 80, 72]; // result of each charCode ^ ADMIN_KEY
-const ADMIN_KEY = 17;
-const getAdminPassword = () =>
-  ADMIN_PASSWORD_ENC.map((code) => String.fromCharCode(code ^ ADMIN_KEY)).join("");
-let isAdminAuthed = localStorage.getItem("mc_admin_ok") === "1";
-
-// add event to all nav link
-for (let i = 0; i < navigationLinks.length; i++) {
-  navigationLinks[i].addEventListener("click", function () {
-
-    const clickedLabel = this.innerHTML.toLowerCase();
-
-    // Protect admin page - only accessible if authenticated
-    if (clickedLabel === "admin" && !isAdminAuthed) {
-      // If trying to access admin without auth, show login section
-      if (adminOpenBtn) {
-        adminOpenBtn.click();
-      }
-      return; // Don't navigate to admin page
-    }
-
-    // toggle articles
-    pages.forEach((page) => {
-      if (page.dataset.page === clickedLabel) {
-        page.classList.add("active");
-      } else {
-        page.classList.remove("active");
-      }
-    });
-
-    // toggle navbar active state
-    navigationLinks.forEach((link) => {
-      if (link === this) {
-        link.classList.add("active");
-      } else {
-        link.classList.remove("active");
-      }
-    });
-
-    window.scrollTo(0, 0);
-
-  });
-}
-
-
-
-// ===== ADMIN PANEL LOGIC =====
-
-// helper to generate simple ids
-const createId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
-
-// admin login gate
-const adminLoginSection = document.getElementById("admin-login-section");
-const adminContent = document.getElementById("admin-content");
-const adminLoginForm = document.getElementById("admin-login-form");
-const adminLoginError = document.getElementById("admin-login-error");
-const adminLogoutBtn = document.getElementById("admin-logout-btn");
-const adminOpenBtn = document.getElementById("admin-open-btn");
-
-const updateAdminView = () => {
-  if (!adminLoginSection || !adminContent) return;
-
-  if (isAdminAuthed) {
-    adminLoginSection.style.display = "none";
-    adminContent.style.display = "block";
-  } else {
-    adminLoginSection.style.display = "block";
-    adminContent.style.display = "none";
-  }
-
-  if (adminLoginError) {
-    adminLoginError.style.display = "none";
-  }
-  
-  // Hide admin button in sidebar if not authenticated (optional - you can remove this if you want the button always visible)
-  // The button will still require authentication to access admin content
-};
-
-if (adminLoginForm) {
-  adminLoginForm.addEventListener("submit", function (e) {
-    e.preventDefault();
-    const formData = new FormData(adminLoginForm);
-    const pwd = (formData.get("password") || "").toString();
-
-    if (pwd === getAdminPassword()) {
-      isAdminAuthed = true;
-      localStorage.setItem("mc_admin_ok", "1");
-      updateAdminView();
-      adminLoginForm.reset();
-    } else if (adminLoginError) {
-      adminLoginError.style.display = "block";
-    }
-  });
-}
-
-updateAdminView();
-
-// Ensure admin page is not visible on load if not authenticated
-if (!isAdminAuthed) {
-  const adminPage = document.querySelector('[data-page="admin"]');
-  if (adminPage) {
-    adminPage.classList.remove("active");
-  }
-}
-
-if (adminLogoutBtn) {
-  adminLogoutBtn.addEventListener("click", function () {
-    isAdminAuthed = false;
-    localStorage.removeItem("mc_admin_ok");
-    updateAdminView();
-    // Navigate away from admin page after logout
-    const adminPage = document.querySelector('[data-page="admin"]');
-    if (adminPage && adminPage.classList.contains("active")) {
-      // Navigate to about page
-      const aboutPage = document.querySelector('[data-page="about"]');
-      if (aboutPage) {
-        adminPage.classList.remove("active");
-        aboutPage.classList.add("active");
-      }
-    }
-  });
-}
-
-if (adminOpenBtn) {
-  adminOpenBtn.addEventListener("click", function () {
-    // Only allow access if authenticated
-    if (!isAdminAuthed) {
-      // Show login section if not authenticated
-      pages.forEach((page) => {
-        if (page.dataset.page === "admin") {
-          page.classList.add("active");
-        } else {
-          page.classList.remove("active");
-        }
-      });
-      navigationLinks.forEach((link) => link.classList.remove("active"));
-      window.scrollTo(0, 0);
-      return;
-    }
-    
-    pages.forEach((page) => {
-      if (page.dataset.page === "admin") {
-        page.classList.add("active");
-      } else {
-        page.classList.remove("active");
-      }
-    });
-
-    navigationLinks.forEach((link) => link.classList.remove("active"));
-    window.scrollTo(0, 0);
-  });
-}
-
-// ---- PROJECT ADMIN ----
-const projectAdminForm = document.getElementById("project-admin-form");
-const projectAdminList = document.getElementById("project-admin-list");
-let editingProjectId = null;
-const projectCategoryList = document.getElementById("project-category-list");
-const BASE_CATEGORIES = [
-  "Data Science",
-  "Machine Learning",
-  "AI / Deep Learning",
-  "Data Visualization",
-  "Python Projects",
-  "Analytics & BI"
-];
-
-const projectCategorySelect = projectAdminForm
-  ? projectAdminForm.querySelector('select[name="category"]')
-  : null;
-const projectCategoryOtherWrapper = document.getElementById(
-  "project-category-other-wrapper"
-);
-
-const initProjectCategorySelectOptions = () => {
-  if (!projectCategorySelect) return;
-  const existingValues = new Set(
-    Array.from(projectCategorySelect.options).map((opt) => opt.value)
-  );
-  BASE_CATEGORIES.forEach((category) => {
-    if (existingValues.has(category)) return;
-    const option = document.createElement("option");
-    option.value = category;
-    option.textContent = category;
-    projectCategorySelect.appendChild(option);
-  });
-};
-initProjectCategorySelectOptions();
-const toggleProjectOtherCategory = () => {
-  if (!projectCategorySelect || !projectCategoryOtherWrapper) return;
-  if (projectCategorySelect.value === "__other") {
-    projectCategoryOtherWrapper.style.display = "block";
-  } else {
-    projectCategoryOtherWrapper.style.display = "none";
-    const otherInput = projectCategoryOtherWrapper.querySelector(
-      'input[name="categoryOther"]'
-    );
-    if (otherInput) otherInput.value = "";
-  }
-};
-
-if (projectCategorySelect) {
-  projectCategorySelect.addEventListener("change", toggleProjectOtherCategory);
-}
-
-const renderAdminProjects = () => {
-  if (!projectAdminList) return;
-
-  const userProjects = loadUserProjects();
-  projectAdminList.innerHTML = "";
-
-  if (!userProjects.length) {
-    const li = document.createElement("li");
-    li.className = "skills-item";
-    li.innerHTML = "<p class=\"timeline-text\">No admin-added projects yet.</p>";
-    projectAdminList.appendChild(li);
-  } else {
-    userProjects.forEach((p) => {
-      const li = document.createElement("li");
-      li.className = "skills-item";
-      li.innerHTML = `
-        <div class="title-wrapper">
-          <h5 class="h5">${p.title}</h5>
-          <data>${p.displayCategory} • ${p.category}</data>
-        </div>
-        <div class="skill-progress-bg">
-          <div class="skill-progress-fill" style="width: 100%;"></div>
-        </div>
-        <button type="button" data-edit-project="${p.id}" class="form-btn" style="margin-top:10px;">
-          <ion-icon name="create-outline"></ion-icon>
-          <span>Edit</span>
-        </button>
-        <button type="button" data-remove-project="${p.id}" class="form-btn" style="margin-top:10px;">
-          <ion-icon name="trash-outline"></ion-icon>
-          <span>Remove</span>
-        </button>
-      `;
-      projectAdminList.appendChild(li);
-    });
-  }
-
-  renderAdminProjectCategories();
-};
-
-const renderAdminProjectCategories = () => {
-  if (!projectCategoryList) return;
-
-  const userProjects = loadUserProjects();
-  const customCategories = Array.from(
-    new Set(
-      userProjects
-        .map((p) => p.displayCategory)
-        .filter(
-          (name) =>
-            name &&
-            !BASE_CATEGORIES.includes(name) &&
-            name.toLowerCase() !== "all"
-        )
-    )
-  );
-
-  projectCategoryList.innerHTML = "";
-
-  if (!customCategories.length) {
-    const li = document.createElement("li");
-    li.className = "skills-item";
-    li.innerHTML =
-      '<p class="timeline-text">No custom categories yet. Add a project with "Other (custom)" to create one.</p>';
-    projectCategoryList.appendChild(li);
-    return;
-  }
-
-  customCategories.forEach((cat) => {
-    const li = document.createElement("li");
-    li.className = "skills-item";
-    li.innerHTML = `
-      <div class="title-wrapper">
-        <h5 class="h5">${cat}</h5>
-      </div>
-      <div class="skill-progress-bg">
-        <div class="skill-progress-fill" style="width: 100%;"></div>
-      </div>
-      <button type="button" data-remove-category="${cat}" class="form-btn" style="margin-top:10px;">
-        <ion-icon name="trash-outline"></ion-icon>
-        <span>Delete Category & Projects</span>
-      </button>
-    `;
-    projectCategoryList.appendChild(li);
-  });
-};
-
-if (projectAdminForm) {
-  projectAdminForm.addEventListener("submit", async function (e) {
-    e.preventDefault();
-
-    const formData = new FormData(projectAdminForm);
-    const title = (formData.get("title") || "").toString().trim();
-    const categoryRaw = (formData.get("category") || "").toString().trim();
-    const categoryOther = (formData.get("categoryOther") || "")
-      .toString()
-      .trim();
-    const fileInput = projectAdminForm.querySelector('input[name="image"]');
-    const file = fileInput && fileInput.files ? fileInput.files[0] : null;
-    let link = (formData.get("link") || "").toString().trim();
-
-    // determine display category (predefined or custom)
-    let categoryInput = categoryRaw;
-    if (categoryRaw === "__other") {
-      categoryInput = categoryOther;
-    }
-
-    if (!title || !categoryInput || !file || !link) {
-      alert("Please fill in all fields including the image file.");
-      return;
-    }
-
-    // normalize link so google.com becomes https://google.com
-    if (!/^https?:\/\//i.test(link)) {
-      link = "https://" + link;
-    }
-
-    // Generate a safe filename from the project title
-    const safeTitle = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-    const fileExtension = file.name.split('.').pop();
-    const imageFileName = `project-${safeTitle}.${fileExtension}`;
-
-    // Save the file automatically to assets/projects/ directory
-    let imagePath;
-    try {
-      imagePath = await saveFileToDirectory(file, "projects", imageFileName);
-    } catch (error) {
-      console.error("Error saving project image:", error);
-      alert(`Failed to save project image: ${error.message}\n\nPlease try again and make sure to grant directory access when prompted.`);
-      return; // Stop form submission if file save fails
-    }
-
-    const categoryLower = categoryInput.toLowerCase();
-
-    const current = loadUserProjects();
-
-    if (editingProjectId) {
-      const idx = current.findIndex((p) => p.id === editingProjectId);
-      if (idx !== -1) {
-        current[idx] = {
-          ...current[idx],
-          title: title,
-          category: categoryLower,
-          displayCategory: categoryInput,
-          image: imagePath,
-          link: link
-        };
-      }
-    } else {
-      const newProject = {
-        id: createId(),
-        title: title,
-        category: categoryLower,
-        displayCategory: categoryInput,
-        image: imagePath,
-        link: link,
-        isDefault: false
-      };
-      current.push(newProject);
-    }
-    const jsonSaved = await saveUserProjects(current);
-
-    projectAdminForm.reset();
-    editingProjectId = null;
-    const submitSpan = projectAdminForm.querySelector(".form-btn span");
-    if (submitSpan) submitSpan.textContent = "Add Project";
-    toggleProjectOtherCategory();
-    renderProjects();
-    filterFunc("all");
-    renderAdminProjects();
-    
-    // Show success message
-    if (jsonSaved) {
-      alert("✓ Project saved successfully!\n\nNext steps:\n1. Open GitHub Desktop\n2. Commit the files (assets/data/projects.json and assets/projects/)\n3. Push to GitHub\n\nAll users will see this project after you push!");
-    } else {
-      alert("✓ Project saved to localStorage!\n\nNote: JSON file could not be saved automatically. Please commit and push manually.");
-    }
-  });
-}
-
-if (projectAdminList) {
-  projectAdminList.addEventListener("click", async function (e) {
-    const removeBtn = e.target.closest("[data-remove-project]");
-    const editBtn = e.target.closest("[data-edit-project]");
-
-    if (removeBtn) {
-      const id = removeBtn.getAttribute("data-remove-project");
-      let current = loadUserProjects();
-      current = current.filter((p) => p.id !== id);
-      await saveUserProjects(current);
-
-      renderProjects();
-      filterFunc("all");
-      renderAdminProjects();
-      return;
-    }
-
-    if (editBtn && projectAdminForm) {
-      const id = editBtn.getAttribute("data-edit-project");
-      const current = loadUserProjects();
-      const project = current.find((p) => p.id === id);
-      if (!project) return;
-
-      const titleInput = projectAdminForm.querySelector('input[name="title"]');
-      const categoryInput = projectAdminForm.querySelector('select[name="category"]');
-      const imageInput = projectAdminForm.querySelector('input[name="image"]');
-      const linkInput = projectAdminForm.querySelector('input[name="link"]');
-
-      if (titleInput) titleInput.value = project.title;
-      if (categoryInput) {
-        const optionsValues = Array.from(categoryInput.options).map(
-          (o) => o.value
-        );
-        if (optionsValues.includes(project.displayCategory)) {
-          categoryInput.value = project.displayCategory;
-        } else {
-          categoryInput.value = "__other";
-          if (projectCategoryOtherWrapper) {
-            projectCategoryOtherWrapper.style.display = "block";
-            const otherInput =
-              projectCategoryOtherWrapper.querySelector(
-                'input[name="categoryOther"]'
-              );
-            if (otherInput) otherInput.value = project.displayCategory;
-          }
-        }
-      }
-      // Note: imageInput is now a file input, so we can't set its value
-      // The image path is stored in project.image and will be used when displaying
-      if (linkInput) linkInput.value = project.link;
-
-      editingProjectId = id;
-      const submitSpan = projectAdminForm.querySelector(".form-btn span");
-      if (submitSpan) submitSpan.textContent = "Update Project";
-    }
-  });
-}
-
-renderAdminProjects();
-
-if (projectCategoryList) {
-  projectCategoryList.addEventListener("click", async function (e) {
-    const removeCatBtn = e.target.closest("[data-remove-category]");
-    if (!removeCatBtn) return;
-
-    const catName = removeCatBtn.getAttribute("data-remove-category");
-    let current = loadUserProjects();
-    current = current.filter((p) => p.displayCategory !== catName);
-    await saveUserProjects(current);
-
-    renderProjects();
-    filterFunc("all");
-    renderAdminProjects();
-  });
-}
-
-// ---- CERTIFICATION ADMIN ----
-// loadCerts and saveCerts are now defined above in the data loading section
-
-const certAdminForm = document.getElementById("cert-admin-form");
-const certAdminList = document.getElementById("cert-admin-list");
-const certDisplayList = document.getElementById("certifications-list");
-let editingCertId = null;
-let editingCertImage = null;
-
-const readFileAsDataURL = (file) => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-};
-
-// Store the directory handle for File System Access API
-let projectDirectoryHandle = null;
-
-// Hardcoded project path
-const PROJECT_ROOT_PATH = "C:\\Users\\milind\\Documents\\GitHub\\PortFolio";
-
-// Function to request directory access automatically (called when needed)
-const requestProjectDirectory = async () => {
-  try {
-    if ('showDirectoryPicker' in window) {
-      // Automatically request directory access - no confirm dialog
-      // Browser will remember permission after first time
-      const handle = await window.showDirectoryPicker({
-        mode: 'readwrite',
-        startIn: 'documents'
-      });
-      
-      projectDirectoryHandle = handle;
-      
-      // Mark that permission has been granted
-      localStorage.setItem('mc_directory_permission_granted', '1');
-      
-      // Verify access works by checking assets folder
-      try {
-        await handle.getDirectoryHandle('assets', { create: true });
-        console.log('✓ Directory access granted - files will save automatically!');
-      } catch (e) {
-        console.warn('Could not verify directory access:', e);
-      }
-      
-      return true;
-    }
-    return false;
-  } catch (error) {
-    if (error.name !== 'AbortError') {
-      console.error('Error requesting directory:', error);
-      localStorage.removeItem('mc_directory_permission_granted');
-    }
-    return false;
-  }
-};
-
-// Function to save file to specific subdirectory (projects or certificates)
-const saveFileToDirectory = async (file, subdirectory, fileName) => {
-  // Check if File System Access API is available
-  if (!('showDirectoryPicker' in window)) {
-    alert('File System Access API is not supported in this browser. Please use Chrome or Edge.');
-    throw new Error('File System Access API not supported');
-  }
-
-  try {
-    // If we don't have directory handle yet, request it automatically
-    if (!projectDirectoryHandle) {
-      const hasAccess = await requestProjectDirectory();
-      if (!hasAccess) {
-        throw new Error('Directory access was cancelled or denied. Please grant access to save files automatically.');
-      }
-    }
-    
-    // Navigate to assets/{subdirectory} directory and save file
-    const assetsHandle = await projectDirectoryHandle.getDirectoryHandle('assets', { create: true });
-    const targetHandle = await assetsHandle.getDirectoryHandle(subdirectory, { create: true });
-    
-    // Create file in the directory
-    const fileHandle = await targetHandle.getFileHandle(fileName, { create: true });
-    const writable = await fileHandle.createWritable();
-    await writable.write(file);
-    await writable.close();
-    
-    console.log(`✓ File saved: assets/${subdirectory}/${fileName}`);
-    return `./assets/${subdirectory}/${fileName}`;
-  } catch (error) {
-    console.error('Error saving file:', error);
-    // If directory handle is invalid, clear it and try once more
-    if (error.name === 'NotFoundError' || error.message.includes('invalid')) {
-      projectDirectoryHandle = null;
-      localStorage.removeItem('mc_directory_permission_granted');
-      
-      // Try one more time
-      const hasAccess = await requestProjectDirectory();
-      if (hasAccess) {
-        const assetsHandle = await projectDirectoryHandle.getDirectoryHandle('assets', { create: true });
-        const targetHandle = await assetsHandle.getDirectoryHandle(subdirectory, { create: true });
-        const fileHandle = await targetHandle.getFileHandle(fileName, { create: true });
-        const writable = await fileHandle.createWritable();
-        await writable.write(file);
-        await writable.close();
-        return `./assets/${subdirectory}/${fileName}`;
-      }
-    }
-    
-    alert(`Error saving file: ${error.message}\n\nPlease make sure you select the project directory when prompted.`);
-    throw error;
-  }
-};
-
-// Removed download fallback - files must be saved directly using File System Access API
-
-const renderCertifications = () => {
-  const certs = loadCerts();
-
-  if (certDisplayList) {
-    certDisplayList.innerHTML = "";
-
-    if (!certs.length) {
-      const li = document.createElement("li");
-      li.className = "project-item active";
-      li.innerHTML = `<p class="timeline-text" style="text-align: center; padding: 20px;">Add your certifications from the Admin panel to see them here.</p>`;
-      certDisplayList.appendChild(li);
-    } else {
-      certs.forEach((c) => {
-        const li = document.createElement("li");
-        li.className = "project-item active";
-        
-        // Create image placeholder if no image
-        const imageSrc = c.image || "./assets/images/icon-learning.svg";
-        const imageAlt = c.title || "Certification";
-        
-        li.innerHTML = `
-          <a href="${c.link || "#"}" target="_blank">
-            <figure class="project-img">
-              <div class="project-item-icon-box">
-                <ion-icon name="ribbon-outline"></ion-icon>
-              </div>
-              <img src="${imageSrc}" alt="${imageAlt}" loading="lazy">
-            </figure>
-            <h3 class="project-title">${c.title}</h3>
-            <p class="project-category">${c.issuer} • ${c.date}</p>
-          </a>
-        `;
-        certDisplayList.appendChild(li);
-      });
-    }
-  }
-
-  if (certAdminList) {
-    certAdminList.innerHTML = "";
-
-    if (!certs.length) {
-      const li = document.createElement("li");
-      li.className = "skills-item";
-      li.innerHTML = "<p class=\"timeline-text\">No certifications added yet.</p>";
-      certAdminList.appendChild(li);
-    } else {
-      certs.forEach((c) => {
-        const li = document.createElement("li");
-        li.className = "skills-item";
-        li.innerHTML = `
-          <div class="title-wrapper">
-            <h5 class="h5">${c.title}</h5>
-            <data>${c.issuer} • ${c.date}</data>
-          </div>
-          <div class="skill-progress-bg">
-            <div class="skill-progress-fill" style="width: 100%;"></div>
-          </div>
-          <button type="button" data-edit-cert="${c.id}" class="form-btn" style="margin-top:10px;">
-            <ion-icon name="create-outline"></ion-icon>
-            <span>Edit</span>
-          </button>
-          <button type="button" data-remove-cert="${c.id}" class="form-btn" style="margin-top:10px;">
-            <ion-icon name="trash-outline"></ion-icon>
-            <span>Remove</span>
-          </button>
-        `;
-        certAdminList.appendChild(li);
-      });
-    }
-  }
-};
-
-if (certAdminForm) {
-  certAdminForm.addEventListener("submit", async function (e) {
-    e.preventDefault();
-
-    const formData = new FormData(certAdminForm);
-    const title = (formData.get("title") || "").toString().trim();
-    const issuer = (formData.get("issuer") || "").toString().trim();
-    const date = (formData.get("date") || "").toString().trim();
-    let link = (formData.get("link") || "").toString().trim();
-    const fileInput = certAdminForm.querySelector('input[name="image"]');
-    const file = fileInput && fileInput.files ? fileInput.files[0] : null;
-
-    if (!title || !issuer || !date || !link) return;
-
-    if (!/^https?:\/\//i.test(link)) {
-      link = "https://" + link;
-    }
-
-    const certs = loadCerts();
-
-    let imagePath = null;
-    if (file) {
-      try {
-        // Generate a safe filename from the certification title
-        const safeTitle = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-        const fileExtension = file.name.split('.').pop();
-        const imageFileName = `cert-${safeTitle}.${fileExtension}`;
-        
-        // Save the file automatically to assets/certificates/ directory
-        imagePath = await saveFileToDirectory(file, "certificates", imageFileName);
-      } catch (error) {
-        console.error("Error saving certificate image:", error);
-        alert(`Failed to save certificate image: ${error.message}\n\nPlease try again and make sure to grant directory access when prompted.`);
-        return; // Stop form submission if file save fails
-      }
-    } else {
-      imagePath = editingCertImage || null;
-    }
-
-    if (editingCertId) {
-      const idx = certs.findIndex((c) => c.id === editingCertId);
-      if (idx !== -1) {
-        certs[idx] = {
-          ...certs[idx],
-          title,
-          issuer,
-          date,
-          link,
-          image: imagePath
-        };
-      }
-    } else {
-      certs.push({
-        id: createId(),
-        title,
-        issuer,
-        date,
-        link,
-        image: imagePath
-      });
-    }
-
-    const jsonSaved = await saveCerts(certs);
-    certAdminForm.reset();
-    editingCertId = null;
-    editingCertImage = null;
-    const span = certAdminForm.querySelector(".form-btn span");
-    if (span) span.textContent = "Add Certification";
-    renderCertifications();
-    
-    // Show success message
-    if (jsonSaved) {
-      alert("✓ Certification saved successfully!\n\nNext steps:\n1. Open GitHub Desktop\n2. Commit the files (assets/data/certificates.json and assets/certificates/)\n3. Push to GitHub\n\nAll users will see this certification after you push!");
-    } else {
-      alert("✓ Certification saved to localStorage!\n\nNote: JSON file could not be saved automatically. Please commit and push manually.");
-    }
-  });
-}
-
-if (certAdminList) {
-  certAdminList.addEventListener("click", async function (e) {
-    const removeBtn = e.target.closest("[data-remove-cert]");
-    const editBtn = e.target.closest("[data-edit-cert]");
-
-    if (removeBtn) {
-      const id = removeBtn.getAttribute("data-remove-cert");
-      let certs = loadCerts();
-      certs = certs.filter((c) => c.id !== id);
-      await saveCerts(certs);
-      renderCertifications();
-      return;
-    }
-
-    if (editBtn && certAdminForm) {
-      const id = editBtn.getAttribute("data-edit-cert");
-      const certs = loadCerts();
-      const cert = certs.find((c) => c.id === id);
-      if (!cert) return;
-
-      const titleInput = certAdminForm.querySelector('input[name="title"]');
-      const issuerInput = certAdminForm.querySelector('input[name="issuer"]');
-      const dateInput = certAdminForm.querySelector('input[name="date"]');
-      const linkInput = certAdminForm.querySelector('input[name="link"]');
-      const fileInput = certAdminForm.querySelector('input[name="image"]');
-
-      if (titleInput) titleInput.value = cert.title;
-      if (issuerInput) issuerInput.value = cert.issuer;
-      if (dateInput) dateInput.value = cert.date;
-      if (linkInput) linkInput.value = cert.link;
-      if (fileInput) fileInput.value = "";
-
-      editingCertId = id;
-      editingCertImage = cert.image || null;
-      const span = certAdminForm.querySelector(".form-btn span");
-      if (span) span.textContent = "Update Certification";
-    }
-  });
-}
-
-renderCertifications();
